@@ -11,21 +11,15 @@ class Database():
     def get_db_connection(Database):
         chance = random.random()
         try:
-            if Database == "test":
-                conn = mysql.connect(
-                    host="localhost",
-                    user="root",
-                    password="",
-                    database=Database
-                )
-                return conn
-            if chance <= 0.8:
-                return f'Cannot find the specified database.', 500
-            else:
-                return f'Uh oh, we couldn\'t find the specified database, do you want a magical rabbit?', 500
-        except:
-            maintenance = True
-            return render_template('maintenance.html'), 503
+            dbconnection = mysql.connector.connect(
+                host="localhost",
+                user="root",
+                password="",
+                database=Database
+            )
+            return dbconnection
+        except Exception as e:
+            return e, 503
 
     def GetUserFlags(email):
         conn = mysql.connect(
