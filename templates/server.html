@@ -1,11 +1,131 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SingleCraft | {{ Server.name }}</title>
+    <title>Console | {{ server.name }}</title>
+    <style>
+        body {
+            padding: 0;
+            margin: 0;
+        }
+
+        .header {
+            display: flex;
+            flex-direction: row;
+            gap: 15px;
+            padding-left: 20px;
+            background-color: #008000;
+            align-items: center;
+        }
+
+        .header-bottom {
+            display: flex;
+            flex-direction: row-reverse;
+            gap: 15px;
+            padding-right: 20px;
+            height: 50px;
+            background-color: #015501;
+            align-items: center;
+        }
+
+        .header-bottom a {
+            text-decoration: none;
+            font-size: 2em;
+            width: 115px;
+            height: 40px;
+            color: #cacaca;
+            background-color: rgba(97, 97, 97, 0.3);
+            backdrop-filter: blur(5px);
+        }
+
+        #console {
+            background: black;
+            color: white;
+            padding: 10px;
+            height: 500px;
+            overflow-y: scroll;
+            font-family: monospace;
+        }
+    </style>
+    <script>
+        async function fetchConsole() {
+            const res = await fetch(`/API/Console/{{ server.name }}`);
+            const data = await res.json();
+            const consoleDiv = document.getElementById("console");
+            consoleDiv.innerHTML = data.logs.map(l => `<pre>${l}</pre>`).join('');
+            consoleDiv.scrollTop = consoleDiv.scrollHeight;
+        }
+
+        async function startServer() {
+            const jarName = document.getElementById("VersionChanger").value;
+            const Button = document.getElementById("start");
+            const StopButton = document.getElementById("stop");
+            if (!jarName) return;
+            await fetch(`/API/StartServer/{{ server.name }}/${jarName}`, { method: "POST" });
+            Button.disabled = true;
+            StopButton.disabled = false;
+        }
+
+        async function stopServer() {
+            await fetch(`/API/StopServer/{{ server.name }}`, { method: "POST" });
+            const Button = document.getElementById("start");
+            const StopButton = document.getElementById("stop");
+            Button.disabled = false;
+            StopButton.disabled = true;
+        }
+
+        async function ClearConsole() {
+            await fetch(`/API/ClearConsoleHistory/{{ server.name }}`, { method: "POST" });
+        }
+
+        async function sendCommand() {
+            const input = document.getElementById("cmd");
+            const cmd = input.value.trim();
+            if (!cmd) return;
+
+            await fetch(`/API/SendCommand/{{ server.name }}`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ command: cmd })
+            });
+
+            input.value = "";
+        }
+
+        async function ChangePort() {
+            const inputPort = document.getElementById("PortChanger");
+            await fetch(`/API/UpdatePort/${inputPort.value}/{{ server.name }}`, { method: "POST" });
+        }
+
+        setInterval(fetchConsole, 2000);
+        window.onload = fetchConsole;
+    </script>
 </head>
 <body>
+    <div class="header">
+        <h1>SingleCraft</h1>
+    </div>
+    <div class="header-bottom">
+       <a id="Logout" href="/logout">Logout</a>
+        <a id="Home" href="/home">home</a>
+    </div>
 
+    <h2>Console de {{ server.name }}</h2>
+    <button id="start" onclick="startServer()">Démarrer</button>
+    <button id="stop" onclick="stopServer()">Arrêter</button>
+
+    <div id="console"></div>
+
+    <div style="margin-top:10px;">
+        <input type="text" id="cmd" onkeydown="if(event.key==='Enter'){sendCommand();}" placeholder="Enter a command">
+        <button onclick="sendCommand()">Envoyer</button>
+    </div>
+
+    <div style="margin-top:10px;">
+        <input type="text" id="PortChanger" onkeydown="if(event.key==='Enter'){ChangePort();}" value="{{ server.Port }}">
+
+        <input type="text" id="VersionChanger" onkeydown="if(event.key==='Enter'){ChangePort();}" value="{{ server.Version }}">
+    </div>
+    <button onclick="ClearConsole()">Clear Console History</button>
 </body>
 </html>

@@ -2,10 +2,75 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SingleCraft | {{ User.name }}</title>
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0">
+    <title>SingleCraft | {{ user.name }}</title>
+    <style>
+        body {
+            padding: 0;
+            margin: 0;
+        }
+
+        .header {
+            display: flex;
+            flex-direction: row;
+            gap: 15px;
+            padding-left: 20px;
+            background-color: #008000;
+            align-items: center;
+        }
+
+        .header-bottom {
+            display: flex;
+            flex-direction: row-reverse;
+            gap: 15px;
+            padding-right: 20px;
+            height: 50px;
+            background-color: #015501;
+            align-items: center;
+        }
+
+        .header-bottom a {
+            text-decoration: none;
+            font-size: 2em;
+            width: 115px;
+            height: 40px;
+            color: #cacaca;
+            background-color: rgba(97, 97, 97, 0.3);
+            backdrop-filter: blur(5px);
+        }
+    </style>
 </head>
 <body>
+    <div class="header">
+        <h1>SingleCraft</h1>
+    </div>
+    <div class="header-bottom">
+       <a id="Logout" href="/logout">Logout</a>
+        <a id="Home" href="/home">home</a>
+    </div>
 
+    <form action="/API/CreateServer" method="post">
+        <input type="text" name="servername" placeholder="Nom du serveur" required>
+        <input type="number" name="serverslot" placeholder="Nombre de slots" required>
+        <button type="submit">Create server</button>
+    </form>
+
+    <form action="/API/DeleteServer" method="post">
+        <input type="text" name="servername" placeholder="Nom du serveur" required>
+        <button type="submit">Delete server</button>
+    </form>
+{% for server in servers %}
+<form action="http://localhost:5000/API/DeleteServer" method="post">
+<input type="hidden" name="servername" value="{{ server.name }}">
+<p>
+    {% if Online == True %}
+    <a href="http://localhost:5000/Server-Detail/{{ server.name }}"><span id="status" title="This server is online">✔️</span> {{ server.name }}</a>
+    {% else %}
+    <a href="http://localhost:5000/Server-Detail/{{ server.name }}"><span id="status" title="This server is currently offline">✖️ </span> {{ server.name }}</a>
+    {% endif %}
+    <button type="submit">Delete Server</button>
+</p>
+</form>
+{% endfor %}
 </body>
 </html>
