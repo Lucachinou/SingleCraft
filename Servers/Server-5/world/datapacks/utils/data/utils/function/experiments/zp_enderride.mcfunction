@@ -1,0 +1,1 @@
+execute if score EnderRide EnabledFeatures matches 1.. run execute at @e[type=ender_pearl] run tp @p[distance=..3] ~ ~ ~

@@ -1,0 +1,1 @@
+execute at @e[type=armor_stand,tag=SpawnUtilsDataMushroom] run particle minecraft:flame ~ ~4 ~ 2.5 2.5 2.5 0.01 1

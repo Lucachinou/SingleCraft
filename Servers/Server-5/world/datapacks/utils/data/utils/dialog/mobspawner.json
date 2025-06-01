@@ -1,0 +1,74 @@
+{
+  "type": "minecraft:multi_action",
+  "title": "Mob Spawner",
+  "body": {
+    "type": "minecraft:item",
+    "item": {
+      "id": "minecraft:creeper_spawn_egg"
+    },
+    "show_decorations": false,
+    "show_tooltip": false
+  },
+  "can_close_with_escape": true,
+  "inputs": [
+    {
+      "type": "minecraft:text",
+      "key": "mobname",
+      "width": 150,
+      "initial": " ",
+      "label": "Mob Name",
+      "max_length": 16
+    },
+
+    {
+      "type": "minecraft:text",
+      "key": "mobtags",
+      "width": 150,
+      "initial": "\"\"",
+      "label": "Mob Tags"
+    },
+    {
+      "type": "minecraft:text",
+      "key": "mobofficialname",
+      "label": "Mob ID (Ex: minecraft:zombie)",
+      "initial": "minecraft:"
+    },
+    {
+      "type": "minecraft:boolean",
+      "key": "noai",
+      "label": "No AI?",
+      "initial": false
+    },
+    {
+      "type": "minecraft:boolean",
+      "key": "silent",
+      "label": "Silent mob?",
+      "initial": false
+    },
+    {
+      "type": "minecraft:boolean",
+      "key": "invisiblebool",
+      "label": "Invisible mob?",
+      "initial": false
+    },
+    {
+      "type": "minecraft:text",
+      "key": "mobnbt",
+      "width": 150,
+      "initial": "",
+      "label": "Custom NBT"
+    }
+  ],
+  "actions": [
+    {
+      "label": "Spawn",
+      "tooltip": "Spawn the mob",
+      "id": "spawnbutton",
+      "on_submit": {
+        "type": "minecraft:command_template",
+        "template": "execute at @s run summon $(mobofficialname) ~ ~ ~ {NoAI:$(noai),CustomName: \"$(mobname)\",Silent:$(silent),Invisible:$(invisiblebool), Tags:[$(mobtags)], $(mobnbt)}"
+      }
+    }
+  ],
+  "columns": 1
+}

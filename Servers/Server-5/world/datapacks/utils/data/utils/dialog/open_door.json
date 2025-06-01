@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:multi_action",
+  "title": "Experiments Door",
+  "body": {
+    "type": "minecraft:plain_message",
+    "contents": ""
+  },
+  "can_close_with_escape": false,
+  "actions": [
+    {
+      "label": "Open Door",
+      "tooltip": "Open the experiments door",
+      "on_click": {
+        "action": "run_command",
+        "command": "function utils:zp_opendoor"
+      }
+    },
+    {
+      "label": "Close Door",
+      "tooltip": "Close the experiments door",
+      "on_click": {
+        "action": "run_command",
+        "command": "function utils:zp_closedoor"
+      }
+    }
+  ]
+}

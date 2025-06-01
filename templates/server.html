@@ -42,18 +42,65 @@
             background: black;
             color: white;
             padding: 10px;
-            height: 500px;
+            height: 350px;
+            width: 750px;
             overflow-y: scroll;
+            overflow-x: scroll;
             font-family: monospace;
+        }
+        .StatServer {
+            display: flex;
+            flex-direction: row;
+            gap: 10px;
+            width: 125px;
+            margin-left: 20px;
+        }
+
+        .StatServer button {
+            background-color: #218838;
+            font-size: 1.5em;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .Sidebar {
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            z-index: 2;
+            height: 100vh;
+            width: 200px;
+            background-color: #28a745;
+        }
+        .serverdetail {
+            z-index: 1;
+        }
+        .ServerInformations {
+            display: flex;
+            flex-direction: row;
+        }
+        .ServerInformations button {
+            margin-top: 15px;
+            max-height: 50px;
+        }
+        .PageContainer {
+            display: flex;
+            flex-direction: row;
         }
     </style>
     <script>
         async function fetchConsole() {
-            const res = await fetch(`/API/Console/{{ server.name }}`);
+            const res = await fetch(`/API/Console/{{ server.id }}`);
             const data = await res.json();
             const consoleDiv = document.getElementById("console");
+
             consoleDiv.innerHTML = data.logs.map(l => `<pre>${l}</pre>`).join('');
             consoleDiv.scrollTop = consoleDiv.scrollHeight;
+            const isAtBottom = consoleDiv.scrollHeight - consoleDiv.clientHeight <= consoleDiv.scrollTop + 10;
+            if (isAtBottom) {
+                consoleDiv.scrollTop = consoleDiv.scrollHeight;
+            }
         }
 
         async function startServer() {
@@ -61,21 +108,17 @@
             const Button = document.getElementById("start");
             const StopButton = document.getElementById("stop");
             if (!jarName) return;
-            await fetch(`/API/StartServer/{{ server.name }}/${jarName}`, { method: "POST" });
-            Button.disabled = true;
-            StopButton.disabled = false;
+            await fetch(`/API/StartServer/{{ server.id }}/${jarName}`, { method: "POST" });
         }
 
         async function stopServer() {
-            await fetch(`/API/StopServer/{{ server.name }}`, { method: "POST" });
+            await fetch(`/API/StopServer/{{ server.id }}`, { method: "POST" });
             const Button = document.getElementById("start");
             const StopButton = document.getElementById("stop");
-            Button.disabled = false;
-            StopButton.disabled = true;
         }
 
         async function ClearConsole() {
-            await fetch(`/API/ClearConsoleHistory/{{ server.name }}`, { method: "POST" });
+            await fetch(`/API/ClearConsoleHistory?server_id={{ server.id }}`, { method: "POST" });
         }
 
         async function sendCommand() {
@@ -83,7 +126,7 @@
             const cmd = input.value.trim();
             if (!cmd) return;
 
-            await fetch(`/API/SendCommand/{{ server.name }}`, {
+            await fetch(`/API/SendCommand/{{ server.id }}`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ command: cmd })
@@ -94,7 +137,12 @@
 
         async function ChangePort() {
             const inputPort = document.getElementById("PortChanger");
-            await fetch(`/API/UpdatePort/${inputPort.value}/{{ server.name }}`, { method: "POST" });
+            await fetch(`/API/UpdatePort/${inputPort.value}/{{ server.id }}`, { method: "POST" });
+        }
+
+        async function ChangeVersion() {
+            const inputJar = document.getElementById("VersionChanger");
+            await fetch(`/API/UpdateVersion/${inputJar.value}/{{ server.id }}`, { method: "POST" });
         }
 
         setInterval(fetchConsole, 2000);
@@ -110,22 +158,32 @@
         <a id="Home" href="/home">home</a>
     </div>
 
-    <h2>Console de {{ server.name }}</h2>
-    <button id="start" onclick="startServer()">Démarrer</button>
-    <button id="stop" onclick="stopServer()">Arrêter</button>
+    <div class="PageContainer">
+        <div class="Sidebar">
+            <button style="margin-top: 15px;" onclick="window.location.href='/Server-Detail/{{ server.id }}'" disabled>Acceuil</button>
+            <button style="margin-top: 15px;" onclick="window.location.href='/Server-Detail/Datapack/{{ server.id }}'">Paramêtres</button>
+        </div>
 
-    <div id="console"></div>
+        <div class="serverdetail">
+            <div class="ServerInformations">
+                <div id="console"></div>
+                <div class="StatServer">
+                    <button id="start" onclick="startServer()">Démarrer</button>
+                    <button id="stop" onclick="stopServer()">Arrêter</button>
+                </div>
+            </div>
 
-    <div style="margin-top:10px;">
-        <input type="text" id="cmd" onkeydown="if(event.key==='Enter'){sendCommand();}" placeholder="Enter a command">
-        <button onclick="sendCommand()">Envoyer</button>
+            <div style="margin-top:10px;">
+                <input type="text" id="cmd" onkeydown="if(event.key==='Enter'){sendCommand();}" placeholder="Enter a command" style="width: 250px;">
+                <button onclick="sendCommand()">Envoyer</button>
+            </div>
+            <div style="margin-top:10px;">
+                <input type="text" id="PortChanger" onkeydown="if(event.key==='Enter'){ChangePort();}" value="{{ server.Port }}">
+
+                <input type="text" id="VersionChanger" onkeydown="if(event.key==='Enter'){ChangeVersion();}" value="{{ server.Version }}">
+            </div>
+            <button onclick="ClearConsole()">Clear Console History</button>
+        </div>
     </div>
-
-    <div style="margin-top:10px;">
-        <input type="text" id="PortChanger" onkeydown="if(event.key==='Enter'){ChangePort();}" value="{{ server.Port }}">
-
-        <input type="text" id="VersionChanger" onkeydown="if(event.key==='Enter'){ChangePort();}" value="{{ server.Version }}">
-    </div>
-    <button onclick="ClearConsole()">Clear Console History</button>
 </body>
 </html>

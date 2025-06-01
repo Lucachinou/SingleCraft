@@ -1,0 +1,1 @@
+fill 5652 63 -5609 5652 64 -5609 minecraft:iron_trapdoor[ facing=south, open=true]

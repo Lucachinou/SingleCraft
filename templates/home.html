@@ -8,6 +8,7 @@
         body {
             padding: 0;
             margin: 0;
+            background-color: #ececec;
         }
 
         .header {
@@ -38,6 +39,12 @@
             background-color: rgba(97, 97, 97, 0.3);
             backdrop-filter: blur(5px);
         }
+
+        #status {
+            text-decoration: none;
+            color: #000000;
+        }
+
     </style>
 </head>
 <body>
@@ -59,18 +66,22 @@
         <input type="text" name="servername" placeholder="Nom du serveur" required>
         <button type="submit">Delete server</button>
     </form>
+{% if servers == [] %}
+    <p>Il n'y actuellement aucun serveur crée.</p>
+{% else %}
 {% for server in servers %}
 <form action="http://localhost:5000/API/DeleteServer" method="post">
 <input type="hidden" name="servername" value="{{ server.name }}">
 <p>
-    {% if Online == True %}
-    <a href="http://localhost:5000/Server-Detail/{{ server.name }}"><span id="status" title="This server is online">✔️</span> {{ server.name }}</a>
+    {% if server.Online == True %}
+    <a id="status" href="http://localhost:5000/Server-Detail/{{ server.ID }}"><span id="status" title="This server is online">✔️</span> {{ server.name }}</a>
     {% else %}
-    <a href="http://localhost:5000/Server-Detail/{{ server.name }}"><span id="status" title="This server is currently offline">✖️ </span> {{ server.name }}</a>
+    <a id="status" href="http://localhost:5000/Server-Detail/{{ server.ID }}"><span id="status" title="This server is currently offline">✖️ </span> {{ server.name }}</a>
     {% endif %}
-    <button type="submit">Delete Server</button>
+    <button type="submit">X</button>
 </p>
 </form>
 {% endfor %}
+{% endif %}
 </body>
 </html>

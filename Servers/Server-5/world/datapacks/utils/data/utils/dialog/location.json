@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:multi_action",
+  "title": "Location List",
+  "can_close_with_escape": false,
+  "actions": [
+    {
+      "label": "Port",
+      "tooltip": "Go to port",
+      "on_click": {
+        "action": "run_command",
+        "command": "function utils:spawn"
+      }
+    },
+    {
+      "label": "Mushroom Island",
+      "tooltip": "Go to the mushroom island",
+      "on_click": {
+        "action": "run_command",
+        "command": "function utils:zp_spawnmushroom"
+      }
+    }
+  ]
+}
