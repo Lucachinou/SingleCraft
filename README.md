@@ -1,4 +1,7 @@
 # SingleCraft | Pre-Alpha
 
 SingleCraft is a powerful minecrafts server hosting in Python.
-All copie of SingleCraft with commercial goal is completely disallowed.
+
+## License
+This project is proprietary software. All rights reserved.
+No distribution, modification, or commercial use is allowed without explicit permission.
