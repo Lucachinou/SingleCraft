@@ -1,29 +1,36 @@
-[15:41:23] [ServerMain/INFO]: Environment: Environment[sessionHost=https://sessionserver.mojang.com, servicesHost=https://api.minecraftservices.com, name=PROD]
-[15:41:23] [ServerMain/WARN]: Pack minecart_improvements requires features minecraft:minecart_improvements that are not enabled for this world, disabling pack.
-[15:41:23] [ServerMain/WARN]: Pack redstone_experiments requires features minecraft:redstone_experiments that are not enabled for this world, disabling pack.
-[15:41:25] [ServerMain/INFO]: Loaded 1407 recipes
-[15:41:25] [ServerMain/INFO]: Loaded 1520 advancements
-[15:41:25] [Server thread/INFO]: Starting minecraft server version 1.21.6 Pre-Release 1
-[15:41:25] [Server thread/INFO]: Loading properties
-[15:41:25] [Server thread/INFO]: Default game type: SURVIVAL
-[15:41:25] [Server thread/INFO]: Generating keypair
-[15:41:25] [Server thread/INFO]: Starting Minecraft server on *:25565
-[15:41:25] [Server thread/INFO]: Using default channel type
-[15:41:25] [Server thread/INFO]: Preparing level "world"
-[15:41:26] [Server thread/INFO]: Preparing start region for dimension minecraft:overworld
-[15:41:26] [Worker-Main-1/INFO]: Preparing spawn area: 0%
-[15:41:26] [Worker-Main-1/INFO]: Preparing spawn area: 0%
-[15:41:26] [Server thread/INFO]: Time elapsed: 846 ms
-[15:41:26] [Server thread/INFO]: Done (1.120s)! For help, type "help"
-[15:42:26] [Server thread/INFO]: Server empty for 60 seconds, pausing
-[16:15:25] [Server thread/INFO]: Stopping the server
-[16:15:25] [Server thread/INFO]: Stopping server
-[16:15:25] [Server thread/INFO]: Saving players
-[16:15:25] [Server thread/INFO]: Saving worlds
-[16:15:25] [Server thread/INFO]: Saving chunks for level 'ServerLevel[world]'/minecraft:overworld
-[16:15:25] [Server thread/INFO]: Saving chunks for level 'ServerLevel[world]'/minecraft:the_nether
-[16:15:25] [Server thread/INFO]: Saving chunks for level 'ServerLevel[world]'/minecraft:the_end
-[16:15:25] [Server thread/INFO]: ThreadedAnvilChunkStorage (world): All chunks are saved
-[16:15:25] [Server thread/INFO]: ThreadedAnvilChunkStorage (DIM-1): All chunks are saved
-[16:15:25] [Server thread/INFO]: ThreadedAnvilChunkStorage (DIM1): All chunks are saved
-[16:15:25] [Server thread/INFO]: ThreadedAnvilChunkStorage: All dimensions are saved
+[10:29:37] [ServerMain/INFO]: Environment: Environment[sessionHost=https://sessionserver.mojang.com, servicesHost=https://api.minecraftservices.com, name=PROD]
+[10:29:39] [ServerMain/INFO]: Loaded 1407 recipes
+[10:29:39] [ServerMain/INFO]: Loaded 1520 advancements
+[10:29:39] [Server thread/INFO]: Starting minecraft server version 1.21.6 Pre-Release 2
+[10:29:39] [Server thread/INFO]: Loading properties
+[10:29:39] [Server thread/INFO]: Default game type: SURVIVAL
+[10:29:39] [Server thread/INFO]: Generating keypair
+[10:29:39] [Server thread/INFO]: Starting Minecraft server on *:25565
+[10:29:39] [Server thread/INFO]: Using default channel type
+[10:29:39] [Server thread/INFO]: Preparing level "world"
+[10:29:39] [Server thread/INFO]: Preparing start region for dimension minecraft:overworld
+[10:29:40] [Worker-Main-15/INFO]: Preparing spawn area: 0%
+[10:29:40] [Worker-Main-8/INFO]: Preparing spawn area: 0%
+[10:29:40] [Server thread/INFO]: Time elapsed: 630 ms
+[10:29:40] [Server thread/INFO]: Done (0.906s)! For help, type "help"
+[10:30:40] [Server thread/INFO]: Server empty for 60 seconds, pausing
+[10:31:20] [User Authenticator #1/INFO]: UUID of player Lucachinou is ed721527-a1a1-454d-95fa-c83077ce84ae
+[10:31:21] [Server thread/INFO]: Lucachinou[/127.0.0.1:61515] logged in with entity id 213 at (5653.699999988079, 63.0, -5603.054363605744)
+[10:31:21] [Server thread/INFO]: Lucachinou joined the game
+[10:36:19] [Server thread/INFO]: Villager cuf['Nitwit'/5030, l='ServerLevel[world]', x=4554.72, y=73.56, z=-4563.37] died, message: 'Nitwit suffocated in a wall'
+[10:38:43] [Server thread/INFO]: [Lucachinou: The game is frozen]
+[10:38:48] [Server thread/INFO]: [Lucachinou: The game is running normally]
+[10:44:59] [Server thread/INFO]: [Lucachinou: Summoned new Oak Boat]
+[10:49:51] [Server thread/INFO]: [Lucachinou: Set own game mode to Spectator Mode]
+[10:50:39] [Server thread/INFO]: [Lucachinou: Set own game mode to Creative Mode]
+[11:05:28] [Server thread/WARN]: Lucachinou moved too quickly! -13.862286115638653,-3.8277381341353305,9.964559309012657
+[11:13:41] [Server thread/INFO]: [Lucachinou: Set the weather to clear]
+[11:18:45] [Server thread/INFO]: [Lucachinou: Set own game mode to Spectator Mode]
+[11:19:08] [Server thread/INFO]: [Lucachinou: Set own game mode to Creative Mode]
+[11:22:30] [Server thread/WARN]: Lucachinou moved too quickly! 11.023434631403688,-1.3879001755796594,13.90158930520056
+[12:16:20] [Server thread/INFO]: Lucachinou lost connection: Disconnected
+[12:16:20] [Server thread/INFO]: Lucachinou left the game
+[12:17:20] [Server thread/INFO]: Server empty for 60 seconds, pausing
+[14:43:34] [Server thread/INFO]: Stopping server
+[14:43:34] [Server thread/INFO]: Saving players
+[14:43:34] [Server thread/INFO]: Saving worlds

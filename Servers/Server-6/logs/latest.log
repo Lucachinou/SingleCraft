@@ -1,0 +1,66 @@
+[14:01:52] [ServerMain/INFO]: Environment: Environment[sessionHost=https://sessionserver.mojang.com, servicesHost=https://api.minecraftservices.com, name=PROD]
+[14:01:53] [ServerMain/INFO]: Loaded 1407 recipes
+[14:01:53] [ServerMain/INFO]: Loaded 1520 advancements
+[14:01:53] [Server thread/INFO]: Starting minecraft server version 1.21.6 Pre-Release 1
+[14:01:53] [Server thread/INFO]: Loading properties
+[14:01:53] [Server thread/INFO]: Default game type: SURVIVAL
+[14:01:53] [Server thread/INFO]: Generating keypair
+[14:01:53] [Server thread/INFO]: Starting Minecraft server on *:25566
+[14:01:53] [Server thread/INFO]: Using default channel type
+[14:01:53] [Server thread/INFO]: Preparing level "world"
+[14:01:54] [Server thread/INFO]: Preparing start region for dimension minecraft:overworld
+[14:01:54] [Worker-Main-7/INFO]: Preparing spawn area: 0%
+[14:01:54] [Worker-Main-7/INFO]: Preparing spawn area: 0%
+[14:01:54] [Server thread/INFO]: Time elapsed: 796 ms
+[14:01:54] [Server thread/INFO]: Done (1.046s)! For help, type "help"
+[14:02:04] [User Authenticator #1/INFO]: UUID of player Lucachinou is ed721527-a1a1-454d-95fa-c83077ce84ae
+[14:02:04] [Server thread/INFO]: Lucachinou[/127.0.0.1:60116] logged in with entity id 99 at (14.885444225036895, 69.0, 20.26683276094138)
+[14:02:04] [Server thread/INFO]: Lucachinou joined the game
+[14:03:30] [Server thread/INFO]: [Lucachinou: Gamerule tntExplodes is now set to: false]
+[14:03:47] [Server thread/INFO]: [Lucachinou: Summoned new Primed TNT]
+[14:05:57] [Server thread/INFO]: [Lucachinou: Gamerule tntExplodes is now set to: true]
+[14:06:04] [Server thread/INFO]: [Lucachinou: Gamerule minecartMaxSpeed is now set to: 16]
+[14:07:31] [Server thread/INFO]: [Lucachinou: Set the time to 1000]
+[14:07:47] [Server thread/INFO]: [Lucachinou: Gamerule minecartMaxSpeed is now set to: 8]
+[14:08:34] [Server thread/INFO]: [Lucachinou: Set the time to 18000]
+[14:08:37] [Server thread/INFO]: [Lucachinou: Set the time to 6000]
+[14:08:55] [Server thread/WARN]: Lucachinou moved too quickly! 2.695064798988028,2.446947937232963,10.212671635938392
+[14:13:29] [Server thread/INFO]: Lucachinou has reached the goal [Sky's the Limit]
+[14:16:20] [Server thread/INFO]: [Lucachinou: Set the time to 1000]
+[14:19:08] [Server thread/INFO]: [Lucachinou: Set own game mode to Spectator Mode]
+[14:19:14] [Server thread/INFO]: [Lucachinou: Set own game mode to Creative Mode]
+[14:19:50] [Server thread/INFO]: [Lucachinou: Changed the block at 4202, 76, -5014]
+[14:19:52] [Server thread/INFO]: [Lucachinou: Set own game mode to Spectator Mode]
+[14:19:56] [Server thread/INFO]: [Lucachinou: Set own game mode to Creative Mode]
+[14:19:58] [Server thread/INFO]: [Lucachinou: Changed the block at 4202, 75, -5014]
+[14:20:06] [Server thread/INFO]: [Lucachinou: Changed the block at 4202, 75, -5014]
+[14:20:07] [Server thread/INFO]: [Lucachinou: Changed the block at 4202, 76, -5014]
+[14:20:08] [Server thread/INFO]: [Lucachinou: Changed the block at 4202, 77, -5014]
+[14:20:10] [Server thread/INFO]: [Lucachinou: Set own game mode to Spectator Mode]
+[14:20:14] [Server thread/INFO]: [Lucachinou: Set own game mode to Creative Mode]
+[14:23:35] [Server thread/INFO]: [Lucachinou: Teleported Lucachinou to 2900.920000, 129.000000, -6284.030000]
+[14:23:37] [Server thread/INFO]: [Lucachinou: Teleported Lucachinou to 2900.920000, 129.000000, -6284.030000]
+[14:23:38] [Server thread/INFO]: [Lucachinou: Teleported Lucachinou to 2900.920000, 129.000000, -6284.030000]
+[14:23:38] [Server thread/INFO]: [Lucachinou: Teleported Lucachinou to 2900.920000, 129.000000, -6284.030000]
+[14:23:39] [Server thread/INFO]: [Lucachinou: Teleported Lucachinou to 2900.920000, 129.000000, -6284.030000]
+[14:26:35] [Server thread/INFO]: [Lucachinou: Set the time to 1000]
+[14:34:33] [Server thread/INFO]: [Lucachinou: 12 biome entry/entries set between 2872, 148, -6220 and 2876, 156, -6216]
+[14:35:42] [Server thread/INFO]: [Lucachinou: 45 biome entry/entries set between 2872, 148, -6220 and 2880, 164, -6212]
+[14:36:14] [Server thread/INFO]: [Lucachinou: Set the time to 1000]
+[14:37:47] [Server thread/INFO]: [Lucachinou: Teleported Lucachinou to 2900.920000, 129.000000, -6284.030000]
+[14:44:52] [Server thread/INFO]: [Lucachinou: Set own game mode to Spectator Mode]
+[14:44:56] [Server thread/INFO]: [Lucachinou: Set own game mode to Creative Mode]
+[14:46:03] [Server thread/INFO]: Lucachinou lost connection: Disconnected
+[14:46:03] [Server thread/INFO]: Lucachinou left the game
+[14:47:03] [Server thread/INFO]: Server empty for 60 seconds, pausing
+[14:59:37] [Server thread/INFO]: Stopping the server
+[14:59:37] [Server thread/INFO]: Stopping server
+[14:59:37] [Server thread/INFO]: Saving players
+[14:59:37] [Server thread/INFO]: Saving worlds
+[14:59:37] [Server thread/INFO]: Saving chunks for level 'ServerLevel[world]'/minecraft:overworld
+[14:59:37] [Server thread/INFO]: Saving chunks for level 'ServerLevel[world]'/minecraft:the_end
+[14:59:37] [Server thread/INFO]: Saving chunks for level 'ServerLevel[world]'/minecraft:the_nether
+[14:59:37] [Server thread/INFO]: ThreadedAnvilChunkStorage (world): All chunks are saved
+[14:59:37] [Server thread/INFO]: ThreadedAnvilChunkStorage (DIM1): All chunks are saved
+[14:59:37] [Server thread/INFO]: ThreadedAnvilChunkStorage (DIM-1): All chunks are saved
+[14:59:37] [Server thread/INFO]: ThreadedAnvilChunkStorage: All dimensions are saved

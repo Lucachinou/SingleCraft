@@ -96,7 +96,6 @@
             const consoleDiv = document.getElementById("console");
 
             consoleDiv.innerHTML = data.logs.map(l => `<pre>${l}</pre>`).join('');
-            consoleDiv.scrollTop = consoleDiv.scrollHeight;
             const isAtBottom = consoleDiv.scrollHeight - consoleDiv.clientHeight <= consoleDiv.scrollTop + 10;
             if (isAtBottom) {
                 consoleDiv.scrollTop = consoleDiv.scrollHeight;

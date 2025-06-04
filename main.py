@@ -6,6 +6,7 @@ import subprocess
 import time
 from threading import Thread
 
+from MCProperties import Properties
 from flask import Flask, render_template, request, redirect, url_for, make_response, jsonify, flash
 import mysql.connector
 import nbtlib
@@ -234,6 +235,10 @@ def CreateServer():
         EulaFile = FolderPath / "eula.txt"
         EulaFile.touch()
         EulaFile.write_text("#By changing the setting below to TRUE you are indicating your agreement to our EULA (https://aka.ms/MinecraftEULA).\n#Wed Apr 09 11:39:43 CEST 2025\neula=true")
+
+        propertiesFile = FolderPath / "server.properties"
+        propertiesFile.touch(exist_ok=True)
+        propertiesFile.write_text(f"server-port=25565")
         return redirect(url_for('home'), 300)
     except FileExistsError:
         return redirect(url_for('home'), code=302)
@@ -361,7 +366,10 @@ def update_server_settings(port, server_id):
 
 @app.route("/API/GetProperties/<serverid>")
 def get_properties(serverid):
-    pass
+    server_path = Path.home() / "Documents" / "Scripts" / "Mes Scripts" / "SingleCraft" / "Servers" / f"Server-{serverid}" / "world" / "level.dat"
+    ServerProperties = server_path.parent.parent / "server.properties"
+    ServProperties = Properties(str(ServerProperties))
+    return str(ServProperties)
 
 @app.route('/API/GetFeatures/<serverid>', methods=['GET'])
 def get_features(serverid):
@@ -381,13 +389,30 @@ def get_features(serverid):
 def EnableFeature(serverid):
     Data = request.json.get("data")
     server_path = Path.home() / "Documents" / "Scripts" / "Mes Scripts" / "SingleCraft" / "Servers" / f"Server-{serverid}" / "world" / "level.dat"
+    ServerProperties = server_path.parent.parent / "server.properties"
     if  server_path.exists():
+
         LevelDat = nbtlib.load(server_path)
         EnabledList = LevelDat["Data"]["DataPacks"]["Enabled"]
-        EnabledList.append(nbtlib.String(Data))
+        EnabledList.append(nbtlib.String(str(Data)))
         DisabledList = LevelDat["Data"]["DataPacks"]["Disabled"]
-        DisabledList.remove(nbtlib.String(Data))
+        DisabledList.remove(nbtlib.String(str(Data)))
+
+        if LevelDat["Data"]["enabled_features"] is None:
+            enabledfeatures = LevelDat["Data"]["enabled_features"] = nbtlib.List([])
+        else:
+            enabledfeatures = LevelDat["Data"]["enabled_features"]
+
+        enabledfeatures.append(nbtlib.String(str(Data)))
+
         LevelDat.save()
+
+        server_properties = server_path.parent.parent / "server.properties"
+
+        ServProperties = Properties(str(server_properties))
+        ServProperties.setValue(23, f"{ServProperties.getValue(23)}, {Data}")
+        ServProperties.save()
+
         return LevelDat
     else:
         return redirect(url_for('home'))
@@ -400,10 +425,23 @@ def disableFeature(serverid):
     if  server_path.exists():
         LevelDat = nbtlib.load(server_path)
         EnabledList = LevelDat["Data"]["DataPacks"]["Enabled"]
-        EnabledList.remove(nbtlib.String(Data))
+        EnabledList.remove(nbtlib.String(str(Data)))
         DisabledList = LevelDat["Data"]["DataPacks"]["Disabled"]
-        DisabledList.append(nbtlib.String(Data))
+        DisabledList.append(nbtlib.String(str(Data)))
+        if LevelDat["Data"]["enabled_features"] is None:
+            enabledfeatures = LevelDat["Data"]["enabled_features"] = nbtlib.List([])
+        else:
+            enabledfeatures = LevelDat["Data"]["enabled_features"]
+
+        enabledfeatures.remove(nbtlib.String(str(Data)))
+
         LevelDat.save()
+
+        server_properties = server_path.parent.parent / "server.properties"
+
+        ServProperties = Properties(str(server_properties))
+        ServProperties.RemoveValue(23, f"{Data}")
+        ServProperties.save()
         return LevelDat
     else:
         return redirect(url_for('home'))
@@ -555,7 +593,7 @@ def home():
     servers = []
     for folder in serversFile.iterdir():
         if folder.is_dir():
-            if folder.name in running_servers:
+            if folder.name.replace("Server-", "") in running_servers:
                 isonline = True
             else:
                 isonline = False

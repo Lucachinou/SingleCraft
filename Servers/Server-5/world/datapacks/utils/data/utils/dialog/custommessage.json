@@ -1,5 +1,5 @@
 {
-  "type": "minecraft:multi_action_input_form",
+  "type": "minecraft:multi_action",
   "title": "Custom Message",
   "inputs": [
     {
@@ -22,8 +22,8 @@
       "label": "Send",
       "id": "SendButton",
       "on_submit": {
-        "type": "minecraft:command_template",
-        "template": "tellraw @a {\"text\": \"<$(Username)> $(Message)\"}"
+        "type": "run_command",
+        "command": "tellraw @a {\"text\": \"<$(Username)> $(Message)\"}"
       }
     }
   ]

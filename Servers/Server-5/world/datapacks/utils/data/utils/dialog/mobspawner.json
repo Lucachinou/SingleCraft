@@ -19,7 +19,6 @@
       "label": "Mob Name",
       "max_length": 16
     },
-
     {
       "type": "minecraft:text",
       "key": "mobtags",
@@ -66,7 +65,7 @@
       "id": "spawnbutton",
       "on_submit": {
         "type": "minecraft:command_template",
-        "template": "execute at @s run summon $(mobofficialname) ~ ~ ~ {NoAI:$(noai),CustomName: \"$(mobname)\",Silent:$(silent),Invisible:$(invisiblebool), Tags:[$(mobtags)], $(mobnbt)}"
+        "template": "execute at @s run summon $(mobofficialname) ~ ~ ~ {NoAI:$(noai),CustomName:'{\"text\":\"$(mobname)\"}',Silent:$(silent),Invisible:$(invisiblebool),Tags:[$(mobtags)]$(mobnbt)}"
       }
     }
   ],

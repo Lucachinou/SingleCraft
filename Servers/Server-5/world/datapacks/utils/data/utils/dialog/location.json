@@ -7,7 +7,7 @@
       "label": "Port",
       "tooltip": "Go to port",
       "on_click": {
-        "action": "run_command",
+        "type": "run_command",
         "command": "function utils:spawn"
       }
     },
@@ -15,7 +15,7 @@
       "label": "Mushroom Island",
       "tooltip": "Go to the mushroom island",
       "on_click": {
-        "action": "run_command",
+        "type": "run_command",
         "command": "function utils:zp_spawnmushroom"
       }
     }
