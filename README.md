@@ -15,13 +15,13 @@ So remove the line `DatabaseManager.SetupDatabase()` when your database is corre
 
 - a settings page for change multiple configurations. ❌
 
-- a page for add plugins & mods (With filter for only display usable jar).
+- a page for add plugins & mods (With filter for only display usable jar). ❌
 
-- a dropdown in the server's page for select the correct jar. **(Require the settings page)**
+- a dropdown in the server's page for select the correct jar. **(Require the settings page)** ❌
 
-- Upgrade the UI/UX of all pages.
+- Upgrade the UI/UX of all pages. ❌
 
-- a simplfied installer.
+- a simplfied installer. ❌
 
 ## F.A.Q
 
