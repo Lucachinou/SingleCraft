@@ -15,7 +15,9 @@ import configparser
 from pathlib import Path
 
 app = Flask(__name__)
-#app.secret_key("Ko5D8-4cDF3-95DFa-POd91")
+app.secret_key = "Ko5D8-4cDF3-95DFa-POd91"
+
+date = datetime.datetime.now()
 
 running_servers = {}
 server_logs = {}
@@ -103,6 +105,15 @@ class Database():
         print("#---------- DATABASE SETUP COMPLETE ----------#")
 
 DatabaseManager = Database()
+
+def GetUsers():
+    conn = DatabaseManager.get_db_connection("Singlecraft")
+    cursor = conn.cursor()
+    cursor.execute('SELECT Username FROM accounts')
+    users = cursor.fetchall()
+    if users is not None:
+        return [item for user in users for item in user]
+    return []
 
 @app.route('/Singlecraft/Auth/Register', methods=['POST', 'GET'])
 def AuthRegister():
@@ -345,7 +356,7 @@ def ServersDatapack(server_id):
             return render_template("serverDatapack.html", server={"ID": Servers[0], "name": Servers[1], "Slot": playerSlot,"Version": Servers[3],"Memory": Servers[4], "Port": server_port})
         else:
             flash("Server not found")
-            return redirect(url_for('Home'))
+            return redirect(url_for('home'))
     return None
 
 @app.route('/API/UpdatePort/<port>/<server_id>', methods=['POST'])
@@ -377,11 +388,13 @@ def get_features(serverid):
     cursor = conn.cursor()
     cursor.execute("SELECT Name FROM Servers WHERE ID = %s", (serverid,))
     ServerID = cursor.fetchone()
-    server_path = Path.home() / "Documents" / "Scripts" / "Mes Scripts" / "SingleCraft" / "Servers" / f"Server-{serverid}" / "world" / "level.dat"
-    if server_path.exists():
-        LevelDat = nbtlib.load(server_path)
-        Level = LevelDat["Data"]["DataPacks"]
-        return Level
+    if ServerID is not None:
+        server_path = Path.home() / "Documents" / "Scripts" / "Mes Scripts" / "SingleCraft" / "Servers" / f"Server-{serverid}" / "world" / "level.dat"
+        if server_path.exists():
+            LevelDat = nbtlib.load(server_path)
+            Level = LevelDat["Data"]["DataPacks"]
+            return Level
+        return None
     else:
         return redirect(url_for('home'))
 
@@ -502,7 +515,7 @@ def start_server(server_id, jar_name):
     )
 
     server_logs[server_id] = []
-    server_logs[server_id].append(f"[{datetime.time.hour}:{datetime.time.minute}:{datetime.time.second}] [SingleCraft] Starting server.")
+    server_logs[server_id].append(f"[{date.hour}:{date.minute}:{date.second}] [SingleCraft/INFO] Starting server.")
     running_servers[server_id] = process
 
     def read_output():
@@ -519,9 +532,10 @@ def stop_server(server_id):
     token = request.cookies.get("token")
 
     if not process:
+        server_logs[server_id].append(f"[{date.hour}:{date.minute}:{date.second}] [SingleCraft/INFO] Server already stopped.")
         return False
     try:
-        server_logs[server_id].append(f"[{datetime.time.hour}:{datetime.time.minute}:{datetime.time.second}] [SingleCraft] Stopping server.")
+        server_logs[server_id].append(f"[{date.hour}:{date.minute}:{date.second}] [SingleCraft/INFO] Stopping server.")
         process.stdin.write("stop\n")
         #process.wait(timeout=10)
     except Exception as e:
@@ -531,7 +545,7 @@ def stop_server(server_id):
     return True
 
 def get_console_output(server_name):
-    return server_logs.get(server_name, ["No active console for this server!"])
+    return server_logs.get(server_name, ["No console history for this server!"])
 
 @app.route('/API/Console/<server_name>', methods=['GET'])
 def get_console(server_name):
@@ -545,12 +559,12 @@ def send_command(server_id):
     process = running_servers.get(server_id)
     if process and process.stdin:
         try:
-            server_logs[server_id].append(f"[{datetime.time.hour}:{datetime.time.minute}:{datetime.time.second}] [SingleCraft] executing \"{command}\" ")
+            server_logs[server_id].append(f"[{date.hour}:{date.minute}:{date.second}] [SingleCraft/INFO] executing \"{command}\" ")
             process.stdin.write(command + '\n')
             process.stdin.flush()
             return jsonify({"success": True})
         except KeyError:
-            server_logs[server_id].append(f"[{datetime.time.hour}:{datetime.time.minute}:{datetime.time.second}] [SingleCraft] Cannot execute \"{command}\" ")
+            server_logs[server_id].append(f"[{date.hour}:{date.minute}:{date.second}] [SingleCraft/INFO] Cannot execute \"{command}\" ")
         except Exception as e:
             return jsonify({"success": False, "error": str(e)})
     return jsonify({"success": False, "error": "Cannot send command."})
@@ -599,7 +613,7 @@ def home():
                 isonline = False
             cursor.execute("SELECT * FROM Servers WHERE ID = %s", (folder.name.replace("Server-", ""),))
             ServerDB = cursor.fetchone()
-            if ServerDB is not None:
+            if ServerDB is not None and ServerDB[2] == account[2]:
                 server = {
                     "ID": ServerDB[0],
                     "name": ServerDB[1],
