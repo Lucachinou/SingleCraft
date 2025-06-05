@@ -16,7 +16,7 @@ So remove the line `DatabaseManager.SetupDatabase()` when your database is corre
 - Any simplified installation process in the futur?
   Yes.
 
--# I will add more frequently asked questions later!
+*I will add more frequently asked questions later!*
 
 ## License
 This project is proprietary software. All rights reserved.
