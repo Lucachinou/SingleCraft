@@ -22,6 +22,7 @@ date = datetime.datetime.now()
 running_servers = {}
 server_logs = {}
 
+
 class Database():
     def get_db_connection(self, Database: str):
         try:
@@ -82,29 +83,79 @@ class Database():
         username = cursor.fetchone()
         conn.close()
         return username
+
     def SetupDatabase(self):
         conn = self.get_db_connection("Singlecraft")
         cursor = conn.cursor()
-        cursor.execute('''CREATE TABLE IF NOT EXISTS Accounts (
-                    ID INT AUTO_INCREMENT PRIMARY KEY,
-                    Email TEXT NULL,
-                    Username TEXT NULL,
-                    Password TEXT NULL,
-                    Token TEXT NULL,
-                    Access JSON DEFAULT '{}',
-                    Rank TEXT DEFAULT 'Default' 
-        )''')
-        cursor.execute('''CREATE TABLE IF NOT EXISTS Servers (
-                    ID INT AUTO_INCREMENT PRIMARY KEY,
-                    Name TEXT NULL,
-                    Owner TEXT NULL,
-                    Jar TEXT DEFAULT 'Default.jar',
-                    Memory INT DEFAULT 1024,
-                    UsersAccess JSON NULL
-        )''')
+        cursor.execute('''CREATE TABLE IF NOT EXISTS Accounts
+                          (
+                              ID
+                              INT
+                              AUTO_INCREMENT
+                              PRIMARY
+                              KEY,
+                              Email
+                              TEXT
+                              NULL,
+                              Username
+                              TEXT
+                              NULL,
+                              Password
+                              TEXT
+                              NULL,
+                              Token
+                              TEXT
+                              NULL,
+                              Access
+                              JSON
+                              DEFAULT
+                              '{}',
+                              Rank
+                              TEXT
+                              DEFAULT
+                              'Default'
+                          )''')
+        cursor.execute('''CREATE TABLE IF NOT EXISTS Servers
+                          (
+                              ID
+                              INT
+                              AUTO_INCREMENT
+                              PRIMARY
+                              KEY,
+                              Name
+                              TEXT
+                              NULL,
+                              Owner
+                              TEXT
+                              NULL,
+                              Jar
+                              TEXT
+                              DEFAULT
+                              'Default.jar',
+                              Memory
+                              INT
+                              DEFAULT
+                              1024,
+                              UsersAccess
+                              JSON
+                              NULL
+                          )''')
         print("#---------- DATABASE SETUP COMPLETE ----------#")
 
 DatabaseManager = Database()
+
+def UserAccess(serverid, token: str):
+    if token.strip() is None or serverid is None:
+        return False
+    conn = DatabaseManager.get_db_connection("Singlecraft")
+    cursor = conn.cursor()
+    cursor.execute("SELECT Access, Username FROM Accounts WHERE Token = %s", (token,))
+    User = cursor.fetchone()
+    cursor.execute("SELECT Owner FROM Servers WHERE ID = %s", (serverid,))
+    OwnerName = cursor.fetchone()
+    if serverid in User[0] or OwnerName[0] == User[1]:
+        return True
+    return False
 
 def GetUsers():
     conn = DatabaseManager.get_db_connection("Singlecraft")
@@ -115,6 +166,7 @@ def GetUsers():
         return [item for user in users for item in user]
     return []
 
+
 @app.route('/Singlecraft/Auth/Register', methods=['POST', 'GET'])
 def AuthRegister():
     if request.method == 'POST':
@@ -122,7 +174,6 @@ def AuthRegister():
         email = request.form['email']
         password = request.form['password']
         token = request.form['token']
-
 
         if not username or username.strip() == "":
             flash("Nom d'utilisateur invalide")
@@ -132,7 +183,6 @@ def AuthRegister():
 
         cursor = conn.cursor()
 
-
         cursor.execute('SELECT * FROM Accounts WHERE Username = %s OR Email = %s', (username, email))
         account = cursor.fetchone()
         if account:
@@ -140,9 +190,8 @@ def AuthRegister():
             conn.close()
             return redirect(url_for('AuthRegister'))
 
-
         cursor.execute('INSERT INTO Accounts (Username, Email, Token, Password, Rank) VALUES (%s, %s, %s, %s, %s)',
-                    (username, email, token, password, "Default"))
+                       (username, email, token, password, "Default"))
         conn.commit()
 
         conn.close()
@@ -155,7 +204,7 @@ def AuthRegister():
         else:
             return render_template(url_for('AuthLogin'))
     return redirect(url_for('AuthRegister'))
-    
+
 
 @app.route('/Singlecraft/Auth/login', methods=['POST'])
 def AuthLogin():
@@ -192,9 +241,12 @@ def AuthLogin():
         if 'conn' in locals():
             conn.close()
 
+
 @app.route('/Register')
 def Register():
     return render_template('register.html')
+
+
 @app.route('/')
 def Login():
     token = request.cookies.get('token')
@@ -203,11 +255,13 @@ def Login():
     else:
         return render_template('login.html')
 
+
 @app.route('/logout')
 def Logout():
     response = make_response(redirect(url_for('Login')))
     response.set_cookie("token", "None", max_age=0)
     return response
+
 
 @app.route('/API/CreateServer', methods=['POST'])
 def CreateServer():
@@ -235,7 +289,7 @@ def CreateServer():
     cursor.execute("INSERT INTO Servers (Name, Owner) VALUES (%s, %s)", (servername, Username[0]))
     conn.commit()
 
-    cursor.execute("SELECT ID FROM Servers WHERE Name = %s", (servername,))
+    cursor.execute("SELECT ID FROM Servers WHERE Name = %s ORDER BY ID DESC LIMIT 1", (servername,))
     ServerID = cursor.fetchone()
 
     path = Path.home() / "Documents" / "Scripts" / "Mes Scripts" / "SingleCraft"
@@ -245,7 +299,8 @@ def CreateServer():
         FolderPath.mkdir()
         EulaFile = FolderPath / "eula.txt"
         EulaFile.touch()
-        EulaFile.write_text("#By changing the setting below to TRUE you are indicating your agreement to our EULA (https://aka.ms/MinecraftEULA).\n#Wed Apr 09 11:39:43 CEST 2025\neula=true")
+        EulaFile.write_text(
+            "#By changing the setting below to TRUE you are indicating your agreement to our EULA (https://aka.ms/MinecraftEULA).\n#Wed Apr 09 11:39:43 CEST 2025\neula=true")
 
         propertiesFile = FolderPath / "server.properties"
         propertiesFile.touch(exist_ok=True)
@@ -254,9 +309,10 @@ def CreateServer():
     except FileExistsError:
         return redirect(url_for('home'), code=302)
 
+
 @app.route("/API/DeleteServer", methods=['POST'])
 def DeleteServer():
-    servername = request.form['servername']
+    serverid = request.form['serverid']
     token = request.cookies.get('token')
 
     conn = DatabaseManager.get_db_connection("Singlecraft")
@@ -264,44 +320,119 @@ def DeleteServer():
     cursor.execute("SELECT Access, Username, Token FROM Accounts WHERE Token = %s", (request.cookies.get('token'),))
     Account = cursor.fetchone()
 
-    cursor.execute("SELECT ID, Owner FROM Servers WHERE Name = %s", (servername,))
+    cursor.execute("SELECT Owner FROM Servers WHERE ID = %s", (serverid,))
     ServerID = cursor.fetchone()
-
-    if ServerID[1] == Account[1]:
-        FolderPath = Path.home() / "Documents" / "Scripts" / "Mes Scripts" / "SingleCraft" / "Servers" / f"Server-{ServerID[0]}"
+    if ServerID[0] == Account[1]:
+        FolderPath = Path.home() / "Documents" / "Scripts" / "Mes Scripts" / "SingleCraft" / "Servers" / f"Server-{serverid}"
 
         JsonDumpAccess = json.loads(Account[0])
 
-        if FolderPath.exists() and servername in JsonDumpAccess.get("Access", []):
+        if FolderPath.exists() and serverid in JsonDumpAccess.get("Access", []):
             if isinstance(JsonDumpAccess.get("Access"), list):
                 try:
                     shutil.rmtree(FolderPath)
-                    JsonDumpAccess["Access"].remove(servername)
+                    JsonDumpAccess["Access"].remove(serverid)
                 except ValueError:
                     return redirect(url_for('home'))
             else:
                 try:
                     JsonDumpAccess["Access"] = [JsonDumpAccess.get("Access", "")]
-                    JsonDumpAccess["Access"].remove(servername)
+                    JsonDumpAccess["Access"].remove(serverid)
                 except ValueError:
-                    return redirect(url_for('Home'))
+                    return redirect(url_for('home'))
 
             JsonAccess = json.dumps(JsonDumpAccess)
             cursor.execute("UPDATE Accounts SET Access = %s WHERE Token = %s", (JsonAccess, token))
             conn.commit()
 
-            cursor.execute("DELETE FROM Servers WHERE Name = %s", (servername,))
+            cursor.execute("DELETE FROM Servers WHERE ID = %s", (serverid,))
             conn.commit()
             return redirect(url_for('home'), code=200)
         else:
             return redirect(url_for('home'), code=200)
-    return redirect(url_for('Home'), 200)
+    return redirect(url_for('home'), 200)
 
+@app.route('/API/AddAccess/<serverid>/<userid>')
+def AddAccess(serverid, userid):
+    conn = DatabaseManager.get_db_connection("Singlecraft")
+    cursor = conn.cursor()
+    cursor.execute("SELECT Access FROM Accounts WHERE ID = %s", (userid,))
+    Account = cursor.fetchone()
+
+    if Account[0] is not None and serverid not in Account[0] and UserAccess(serverid, request.cookies.get('token')):
+        # | This part of the code is for add the access to serverside in the database | #
+        cursor.execute("SELECT UsersAccess FROM Servers WHERE ID = %s", (serverid,))
+        UsersAccess = cursor.fetchone()
+        UsersAccess = json.loads(UsersAccess[0])
+
+        if UsersAccess.get("Access"):
+            UsersAccess["Access"].append(userid)
+        else:
+            UsersAccess["Access"] = [userid]
+        cursor.execute("UPDATE Servers SET UsersAccess = %s WHERE ID = %s", (json.dumps(UsersAccess), serverid))
+
+        # | This part of the code is for add the access to userside in the database | #
+        cursor.execute("SELECT Access FROM Accounts WHERE ID = %s", (userid,))
+        Access = cursor.fetchone()
+        Access = json.loads(Access[0])
+
+        if Access.get("Access"):
+            Access["Access"].append(serverid)
+        else:
+            Access["Access"] = [serverid]
+        cursor.execute("UPDATE Accounts SET Access = %s WHERE ID = %s", (json.dumps(Access), userid))
+        conn.commit()
+        conn.close()
+    else:
+        return render_template(url_for("home"))
+
+@app.route('/API/RemoveAccess/<serverid>/<userid>')
+def RemoveAccess(serverid, userid):
+    conn = DatabaseManager.get_db_connection("Singlecraft")
+    cursor = conn.cursor()
+    cursor.execute("SELECT Access FROM Accounts WHERE ID = %s", (userid,))
+    Account = cursor.fetchone()
+
+    if Account[0] is not None and serverid in Account[0] and UserAccess(serverid, request.cookies.get('token')):
+        print(Account[0])
+        # | This part of the code is for add the access to serverside in the database | #
+        cursor.execute("SELECT UsersAccess FROM Servers WHERE ID = %s", (serverid,))
+        UsersAccess = cursor.fetchone()
+        print(UsersAccess)
+        UsersAccess = json.loads(UsersAccess[0])
+        print(UsersAccess)
+
+
+        if UsersAccess.get("Access"):
+            UsersAccess["Access"].remove(userid)
+        else:
+            UsersAccess["Access"] = []
+        cursor.execute("UPDATE Servers SET UsersAccess = %s WHERE ID = %s", (json.dumps(UsersAccess), serverid))
+
+        # | This part of the code is for add the access to userside in the database | #
+        cursor.execute("SELECT Access FROM Accounts WHERE ID = %s", (userid,))
+        Access = cursor.fetchone()
+        print(Access)
+        Access = json.loads(Access[0])
+        print(Access)
+
+        if Access.get("Access"):
+            Access["Access"].remove(serverid)
+        else:
+            Access["Access"] = []
+        cursor.execute("UPDATE Accounts SET Access = %s WHERE ID = %s", (json.dumps(Access), userid))
+        conn.commit()
+        conn.close()
+    else:
+        return render_template(url_for("home"))
 
 @app.route('/Server-Detail/<serverid>')
-def Servers(serverid):
-    if serverid is not None:
-        token = request.args.get('token')
+def Servers(serverid=None):
+    if serverid is None:
+        return redirect(url_for('home'))
+
+    if UserAccess(serverid, request.cookies.get('token')):
+        token = request.cookies.get('token')
 
         conn = DatabaseManager.get_db_connection("Singlecraft")
         cursor = conn.cursor()
@@ -327,15 +458,22 @@ def Servers(serverid):
             server_properties.write_text(f"server-port=25565")
 
         if Servers is not None:
-            return render_template("server.html", server={"id": Servers[0], "name": Servers[1], "Slot": playerSlot,"Version": Servers[3],"Memory": Servers[4], "Port": server_port})
+            return render_template("server.html", server={"id": Servers[0], "name": Servers[1], "Slot": playerSlot,
+                                                          "Version": Servers[3], "Memory": Servers[4],
+                                                          "Port": server_port})
         else:
             flash("Server not found")
-            return redirect(url_for('Home'))
-    return None
+            return redirect(url_for('home'))
+    return redirect(url_for('home'))
+
 
 @app.route('/Server-Detail/Datapack/<server_id>')
-def ServersDatapack(server_id):
-    if server_id is not None:
+def ServersDatapack(server_id=None):
+    try:
+        token = request.cookies.get("token")
+    except:
+        return redirect(url_for('home'))
+    if UserAccess(server_id, request.cookies.get('token')):
         conn = DatabaseManager.get_db_connection("Singlecraft")
         cursor = conn.cursor()
         cursor.execute("SELECT * FROM Servers WHERE ID = %s", (server_id,))
@@ -353,128 +491,211 @@ def ServersDatapack(server_id):
                         playerSlot = int(line.split("=")[1])
 
         if Servers is not None:
-            return render_template("serverDatapack.html", server={"ID": Servers[0], "name": Servers[1], "Slot": playerSlot,"Version": Servers[3],"Memory": Servers[4], "Port": server_port})
+            return render_template("serverDatapack.html",
+                                   server={"ID": Servers[0], "name": Servers[1], "Slot": playerSlot,
+                                           "Version": Servers[3], "Memory": Servers[4], "Port": server_port})
         else:
             flash("Server not found")
             return redirect(url_for('home'))
-    return None
+    return redirect(url_for('home'))
+
 
 @app.route('/Server-Detail/Access/<server_id>')
-def ServersAccess(server_id):
-    if server_id is not None:
+def ServersAccess(server_id= None):
+    try:
+        token = request.cookies.get("token")
+    except:
+        return redirect(url_for('home'))
+    conn = DatabaseManager.get_db_connection("Singlecraft")
+    cursor = conn.cursor()
+    cursor.execute("SELECT Access, Username FROM Accounts WHERE Token = %s", (token,))
+    User = cursor.fetchone()
+    cursor.execute("SELECT Owner FROM Servers WHERE ID = %s", (server_id,))
+    OwnerName = cursor.fetchone()
+    if server_id in User[0] or OwnerName[0] == User[1]:
         conn = DatabaseManager.get_db_connection("Singlecraft")
         cursor = conn.cursor()
         cursor.execute("SELECT * FROM Servers WHERE ID = %s", (server_id,))
         Servers = cursor.fetchone()
 
-        server_properties = Path.home() / "Documents" / "Scripts" / "Mes Scripts" / "SingleCraft" / "Servers" / f"Server-{server_id}" / "server.properties"
-
         if Servers is not None:
-            return render_template("serverAccess.html", server={"ID": Servers[0], "name": Servers[1], "Version": Servers[3],"Memory": Servers[4], "access": Servers[5]})
+            return render_template("serverAccess.html",
+                                   server={"ID": Servers[0], "name": Servers[1], "Version": Servers[3],
+                                           "Memory": Servers[4], "access": Servers[5]})
         else:
             flash("Server not found")
             return redirect(url_for('home'))
-    return None
+    return redirect(url_for('home'))
+
 
 @app.route('/API/UpdatePort/<port>/<server_id>', methods=['POST'])
 def update_server_settings(port, server_id):
-    server_path = Path.home() / "Documents" / "Scripts" / "Mes Scripts" / "SingleCraft" / "Servers" / f"Server-{server_id}"
-    server_properties = server_path / "server.properties"
-    if server_properties.exists():
-        lines = server_properties.read_text().splitlines()
-        new_lines = []
-        for line in lines:
-            if line.startswith("server-port="):
-                new_lines.append(f"server-port={port}")
-            else:
-                new_lines.append(line)
-        server_properties.write_text("\n".join(new_lines))
+    try:
+        token = request.cookies.get("token")
+    except:
+        return redirect(url_for('home'))
+    conn = DatabaseManager.get_db_connection("Singlecraft")
+    cursor = conn.cursor()
+    cursor.execute("SELECT Access, Username FROM Accounts WHERE Token = %s", (token,))
+    User = cursor.fetchone()
+    cursor.execute("SELECT Owner FROM Servers WHERE ID = %s", (server_id,))
+    OwnerName = cursor.fetchone()
+    if server_id in User[0] or OwnerName[0] == User[1]:
+        server_path = Path.home() / "Documents" / "Scripts" / "Mes Scripts" / "SingleCraft" / "Servers" / f"Server-{server_id}"
+        server_properties = server_path / "server.properties"
+        if server_properties.exists():
+            lines = server_properties.read_text().splitlines()
+            new_lines = []
+            for line in lines:
+                if line.startswith("server-port="):
+                    new_lines.append(f"server-port={port}")
+                else:
+                    new_lines.append(line)
+            server_properties.write_text("\n".join(new_lines))
 
-    return redirect(url_for("home"))
+        return redirect(url_for("home"))
+    else:
+        return redirect(url_for('home'))
+
 
 @app.route("/API/GetProperties/<serverid>")
 def get_properties(serverid):
-    server_path = Path.home() / "Documents" / "Scripts" / "Mes Scripts" / "SingleCraft" / "Servers" / f"Server-{serverid}" / "world" / "level.dat"
-    ServerProperties = server_path.parent.parent / "server.properties"
-    ServProperties = Properties(str(ServerProperties))
-    return str(ServProperties)
+    try:
+        token = request.cookies.get("token")
+    except:
+        return redirect(url_for('home'))
+
+    conn = DatabaseManager.get_db_connection("Singlecraft")
+    cursor = conn.cursor()
+    cursor.execute("SELECT Access, Username FROM Accounts WHERE Token = %s", (token,))
+    User = cursor.fetchone()
+    cursor.execute("SELECT Owner FROM Servers WHERE ID = %s", (serverid,))
+    OwnerName = cursor.fetchone()
+    if serverid in User[0] or OwnerName[0] == User[1]:
+        server_path = Path.home() / "Documents" / "Scripts" / "Mes Scripts" / "SingleCraft" / "Servers" / f"Server-{serverid}" / "world" / "level.dat"
+        ServerProperties = server_path.parent.parent / "server.properties"
+        ServProperties = Properties(str(ServerProperties))
+        return str(ServProperties)
+    else:
+        return redirect(url_for('home'))
 
 @app.route('/API/GetFeatures/<serverid>', methods=['GET'])
 def get_features(serverid):
+    try:
+        token = request.cookies.get("token")
+    except:
+        return redirect(url_for('home'))
+
     conn = DatabaseManager.get_db_connection("Singlecraft")
     cursor = conn.cursor()
-    cursor.execute("SELECT Name FROM Servers WHERE ID = %s", (serverid,))
-    ServerID = cursor.fetchone()
-    if ServerID is not None:
-        server_path = Path.home() / "Documents" / "Scripts" / "Mes Scripts" / "SingleCraft" / "Servers" / f"Server-{serverid}" / "world" / "level.dat"
-        if server_path.exists():
-            LevelDat = nbtlib.load(server_path)
-            Level = LevelDat["Data"]["DataPacks"]
-            return Level
-        return None
+    cursor.execute("SELECT Access, Username FROM Accounts WHERE Token = %s", (token,))
+    User = cursor.fetchone()
+    cursor.execute("SELECT Owner FROM Servers WHERE ID = %s", (serverid,))
+    OwnerName = cursor.fetchone()
+    if serverid in User[0] or OwnerName[0] == User[1]:
+        cursor.execute("SELECT Name FROM Servers WHERE ID = %s", (serverid,))
+        ServerID = cursor.fetchone()
+        if ServerID is not None:
+            server_path = Path.home() / "Documents" / "Scripts" / "Mes Scripts" / "SingleCraft" / "Servers" / f"Server-{serverid}" / "world" / "level.dat"
+            if server_path.exists():
+                LevelDat = nbtlib.load(server_path)
+                Level = LevelDat["Data"]["DataPacks"]
+                return Level
+            return None
+        else:
+            return redirect(url_for('home'))
     else:
         return redirect(url_for('home'))
+
 
 @app.route('/API/EnableFeature/<serverid>/', methods=['POST'])
 def EnableFeature(serverid):
-    Data = request.json.get("data")
-    server_path = Path.home() / "Documents" / "Scripts" / "Mes Scripts" / "SingleCraft" / "Servers" / f"Server-{serverid}" / "world" / "level.dat"
-    ServerProperties = server_path.parent.parent / "server.properties"
-    if  server_path.exists():
+    try:
+        token = request.cookies.get("token")
+    except:
+        return redirect(url_for('home'))
+    conn = DatabaseManager.get_db_connection("Singlecraft")
+    cursor = conn.cursor()
+    cursor.execute("SELECT Access, Username FROM Accounts WHERE Token = %s", (token,))
+    User = cursor.fetchone()
+    cursor.execute("SELECT Owner FROM Servers WHERE ID = %s", (serverid,))
+    OwnerName = cursor.fetchone()
+    if serverid in User[0] or OwnerName[0] == User[1]:
+        Data = request.json.get("data")
+        server_path = Path.home() / "Documents" / "Scripts" / "Mes Scripts" / "SingleCraft" / "Servers" / f"Server-{serverid}" / "world" / "level.dat"
+        ServerProperties = server_path.parent.parent / "server.properties"
+        if server_path.exists():
 
-        LevelDat = nbtlib.load(server_path)
-        EnabledList = LevelDat["Data"]["DataPacks"]["Enabled"]
-        EnabledList.append(nbtlib.String(str(Data)))
-        DisabledList = LevelDat["Data"]["DataPacks"]["Disabled"]
-        DisabledList.remove(nbtlib.String(str(Data)))
+            LevelDat = nbtlib.load(server_path)
+            EnabledList = LevelDat["Data"]["DataPacks"]["Enabled"]
+            EnabledList.append(nbtlib.String(str(Data)))
+            DisabledList = LevelDat["Data"]["DataPacks"]["Disabled"]
+            DisabledList.remove(nbtlib.String(str(Data)))
 
-        if LevelDat["Data"]["enabled_features"] is None:
-            enabledfeatures = LevelDat["Data"]["enabled_features"] = nbtlib.List([])
+            if LevelDat["Data"]["enabled_features"] is None:
+                enabledfeatures = LevelDat["Data"]["enabled_features"] = nbtlib.List([])
+            else:
+                enabledfeatures = LevelDat["Data"]["enabled_features"]
+
+            enabledfeatures.append(nbtlib.String(str(Data)))
+
+            LevelDat.save()
+
+            server_properties = server_path.parent.parent / "server.properties"
+
+            ServProperties = Properties(str(server_properties))
+            ServProperties.setValue(23, f"{ServProperties.getValue(23)}, {Data}")
+            ServProperties.save()
+
+            return LevelDat
         else:
-            enabledfeatures = LevelDat["Data"]["enabled_features"]
-
-        enabledfeatures.append(nbtlib.String(str(Data)))
-
-        LevelDat.save()
-
-        server_properties = server_path.parent.parent / "server.properties"
-
-        ServProperties = Properties(str(server_properties))
-        ServProperties.setValue(23, f"{ServProperties.getValue(23)}, {Data}")
-        ServProperties.save()
-
-        return LevelDat
+            return redirect(url_for('home'))
     else:
         return redirect(url_for('home'))
+
 
 @app.route('/API/DisableFeature/<serverid>/', methods=['POST'])
 def disableFeature(serverid):
-    Data = request.json.get("data")
+    try:
+        token = request.cookies.get("token")
+    except:
+        return redirect(url_for('home'))
+    conn = DatabaseManager.get_db_connection("Singlecraft")
+    cursor = conn.cursor()
+    cursor.execute("SELECT Access, Username FROM Accounts WHERE Token = %s", (token,))
+    User = cursor.fetchone()
+    cursor.execute("SELECT Owner FROM Servers WHERE ID = %s", (serverid,))
+    OwnerName = cursor.fetchone()
+    if serverid in User[0] or OwnerName[0] == User[1]:
+        Data = request.json.get("data")
 
-    server_path = Path.home() / "Documents" / "Scripts" / "Mes Scripts" / "SingleCraft" / "Servers" / f"Server-{serverid}" / "world" / "level.dat"
-    if  server_path.exists():
-        LevelDat = nbtlib.load(server_path)
-        EnabledList = LevelDat["Data"]["DataPacks"]["Enabled"]
-        EnabledList.remove(nbtlib.String(str(Data)))
-        DisabledList = LevelDat["Data"]["DataPacks"]["Disabled"]
-        DisabledList.append(nbtlib.String(str(Data)))
-        if LevelDat["Data"]["enabled_features"] is None:
-            enabledfeatures = LevelDat["Data"]["enabled_features"] = nbtlib.List([])
+        server_path = Path.home() / "Documents" / "Scripts" / "Mes Scripts" / "SingleCraft" / "Servers" / f"Server-{serverid}" / "world" / "level.dat"
+        if server_path.exists():
+            LevelDat = nbtlib.load(server_path)
+            EnabledList = LevelDat["Data"]["DataPacks"]["Enabled"]
+            EnabledList.remove(nbtlib.String(str(Data)))
+            DisabledList = LevelDat["Data"]["DataPacks"]["Disabled"]
+            DisabledList.append(nbtlib.String(str(Data)))
+            if LevelDat["Data"]["enabled_features"] is None:
+                enabledfeatures = LevelDat["Data"]["enabled_features"] = nbtlib.List([])
+            else:
+                enabledfeatures = LevelDat["Data"]["enabled_features"]
+
+            enabledfeatures.remove(nbtlib.String(str(Data)))
+
+            LevelDat.save()
+
+            server_properties = server_path.parent.parent / "server.properties"
+
+            ServProperties = Properties(str(server_properties))
+            ServProperties.RemoveValue(23, f"{Data}")
+            ServProperties.save()
+            return LevelDat
         else:
-            enabledfeatures = LevelDat["Data"]["enabled_features"]
-
-        enabledfeatures.remove(nbtlib.String(str(Data)))
-
-        LevelDat.save()
-
-        server_properties = server_path.parent.parent / "server.properties"
-
-        ServProperties = Properties(str(server_properties))
-        ServProperties.RemoveValue(23, f"{Data}")
-        ServProperties.save()
-        return LevelDat
+            return redirect(url_for('home'))
     else:
         return redirect(url_for('home'))
+
 
 @app.route('/API/SetFeatures/<servername>/', methods=['POST'])
 def set_features(servername):
@@ -498,14 +719,25 @@ def set_features(servername):
     """
     return "Not Implemented", 404
 
+
 @app.route('/API/UpdateVersion/<jarfile>/<server_id>', methods=['POST'])
 def update_server_version_settings(jarfile, server_id):
+    try:
+        token = request.cookies.get("token")
+    except:
+        return redirect(url_for('home'))
     conn = DatabaseManager.get_db_connection("Singlecraft")
     cursor = conn.cursor()
-    cursor.execute("UPDATE Servers SET Jar = %s WHERE ID = %s", (jarfile, server_id))
-    conn.commit()
-    cursor.close()
+    cursor.execute("SELECT Access, Username FROM Accounts WHERE Token = %s", (token,))
+    User = cursor.fetchone()
+    cursor.execute("SELECT Owner FROM Servers WHERE ID = %s", (server_id,))
+    OwnerName = cursor.fetchone()
+    if server_id in User[0] or OwnerName[0] == User[1]:
+        cursor.execute("UPDATE Servers SET Jar = %s WHERE ID = %s", (jarfile, server_id))
+        conn.commit()
+        cursor.close()
     return redirect(url_for("home"))
+
 
 def start_server(server_id, jar_name):
     if server_id in running_servers:
@@ -544,68 +776,116 @@ def start_server(server_id, jar_name):
     Thread(target=read_output, daemon=True).start()
     return True
 
+
 def stop_server(server_id):
     process = running_servers.get(server_id)
     token = request.cookies.get("token")
 
     if not process:
-        server_logs[server_id].append(f"[{date.hour}:{date.minute}:{date.second}] [SingleCraft/INFO] Server already stopped.")
+        server_logs[server_id].append(
+            f"[{date.hour}:{date.minute}:{date.second}] [SingleCraft/INFO] Server already stopped.")
         return False
     try:
         server_logs[server_id].append(f"[{date.hour}:{date.minute}:{date.second}] [SingleCraft/INFO] Stopping server.")
         process.stdin.write("stop\n")
-        #process.wait(timeout=10)
+        # process.wait(timeout=10)
     except Exception as e:
         process.kill()
     finally:
         del running_servers[server_id]
     return True
 
+
 def get_console_output(server_name):
     return server_logs.get(server_name, ["No console history for this server!"])
 
-@app.route('/API/Console/<server_name>', methods=['GET'])
-def get_console(server_name):
-    logs = get_console_output(server_name)
-    return jsonify({"logs": logs})
+
+@app.route('/API/Console/<server_id>', methods=['GET'])
+def get_console(server_id):
+    token = request.cookies.get("token")
+    conn = DatabaseManager.get_db_connection("Singlecraft")
+    cursor = conn.cursor()
+    cursor.execute("SELECT Access, Username FROM Accounts WHERE Token = %s", (token,))
+    User = cursor.fetchone()
+    cursor.execute("SELECT Owner FROM Servers WHERE ID = %s", (server_id,))
+    OwnerName = cursor.fetchone()
+    if server_id in User[0] or OwnerName[0] == User[1]:
+        logs = get_console_output(server_id)
+        return jsonify({"logs": logs})
+    else:
+        return redirect(url_for('home'))
+
 
 @app.route('/API/SendCommand/<server_id>', methods=['POST'])
 def send_command(server_id):
     command = request.json.get("command")
+    token = request.cookies.get("token")
 
-    process = running_servers.get(server_id)
-    if process and process.stdin:
-        try:
-            server_logs[server_id].append(f"[{date.hour}:{date.minute}:{date.second}] [SingleCraft/INFO] executing \"{command}\" ")
-            process.stdin.write(command + '\n')
-            process.stdin.flush()
-            return jsonify({"success": True})
-        except KeyError:
-            server_logs[server_id].append(f"[{date.hour}:{date.minute}:{date.second}] [SingleCraft/INFO] Cannot execute \"{command}\" ")
-        except Exception as e:
-            return jsonify({"success": False, "error": str(e)})
-    return jsonify({"success": False, "error": "Cannot send command."})
+    conn = DatabaseManager.get_db_connection("Singlecraft")
+    cursor = conn.cursor()
+    cursor.execute("SELECT Access, Username FROM Accounts WHERE Token = %s", (token,))
+    User = cursor.fetchone()
+    cursor.execute("SELECT Owner FROM Servers WHERE ID = %s", (server_id,))
+    OwnerName = cursor.fetchone()
+    if server_id in User[0] or OwnerName[0] == User[1]:
+        process = running_servers.get(server_id)
+        if process and process.stdin:
+            try:
+                server_logs[server_id].append(
+                    f"[{date.hour}:{date.minute}:{date.second}] [SingleCraft/INFO] executing \"{command}\" ")
+                process.stdin.write(command + '\n')
+                process.stdin.flush()
+                return jsonify({"success": True})
+            except KeyError:
+                server_logs[server_id].append(
+                    f"[{date.hour}:{date.minute}:{date.second}] [SingleCraft/INFO] Cannot execute \"{command}\" ")
+            except Exception as e:
+                return jsonify({"success": False, "error": str(e)})
+        return jsonify({"success": False, "error": "Cannot send command."})
+    else:
+        return redirect(url_for('home'))
 
 
 @app.route('/API/ClearConsoleHistory', methods=['GET'])
 def clear_console_history():
-    server_id = request.args.get('server_id')
+    server_id = request.cookies.get('server_id')
     del server_logs[server_id]
     return 300
 
+
 @app.route('/API/StartServer/<server_id>/<jar_name>', methods=['POST'])
 def start_mc_server(server_id, jar_name):
-    if server_id not in running_servers:
-        success = start_server(server_id, jar_name)
-        return jsonify({"success": success})
+    token = request.cookies.get("token")
+    conn = DatabaseManager.get_db_connection("Singlecraft")
+    cursor = conn.cursor()
+    cursor.execute("SELECT Access, Username FROM Accounts WHERE Token = %s", (token,))
+    User = cursor.fetchone()
+    cursor.execute("SELECT Owner FROM Servers WHERE ID = %s", (server_id,))
+    OwnerName = cursor.fetchone()
+    if server_id in User[0] or OwnerName[0] == User[1]:
+        if server_id not in running_servers:
+            success = start_server(server_id, jar_name)
+            return jsonify({"success": success})
+        return jsonify({"success": False})
     return jsonify({"success": False})
+
 
 @app.route('/API/StopServer/<server_id>', methods=['POST'])
 def stop_mc_server(server_id):
-    if server_id in running_servers:
-        success = stop_server(server_id)
-        return jsonify({"success": success})
+    token = request.cookies.get("token")
+    conn = DatabaseManager.get_db_connection("Singlecraft")
+    cursor = conn.cursor()
+    cursor.execute("SELECT Access, Username FROM Accounts WHERE Token = %s", (token,))
+    User = cursor.fetchone()
+    cursor.execute("SELECT Owner FROM Servers WHERE ID = %s", (server_id,))
+    OwnerName = cursor.fetchone()
+    if server_id in User[0] or OwnerName[0] == User[1]:
+        if server_id in running_servers:
+            success = stop_server(server_id)
+            return jsonify({"success": success})
+        return jsonify({"success": False})
     return jsonify({"success": False})
+
 
 @app.route('/home')
 def home():
@@ -619,7 +899,6 @@ def home():
     isonline = None
     if account is None:
         return redirect(url_for('Logout'))
-
 
     servers = []
     for folder in serversFile.iterdir():
@@ -640,10 +919,13 @@ def home():
                 }
                 servers.append(server)
 
-    return render_template("home.html", user={"name": account[2], "token": account[3], "access": account[5], "flags": account[6]}, servers=servers)
+    return render_template("home.html",
+                           user={"name": account[2], "token": account[3], "access": account[5], "flags": account[6]},
+                           servers=servers)
+
 
 if __name__ == '__main__':
-    port=80
+    port = 80
     try:
         app.run(host='0.0.0.0', port=port, debug=True)
     except Exception as e:

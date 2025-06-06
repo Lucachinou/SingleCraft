@@ -63,7 +63,7 @@
     </form>
 
     <form action="/API/DeleteServer" method="post">
-        <input type="text" name="servername" placeholder="Nom du serveur" required>
+        <input type="text" name="serverid" placeholder="ID of the server" required>
         <button type="submit">Delete server</button>
     </form>
 {% if servers == [] %}
@@ -71,7 +71,7 @@
 {% else %}
 {% for server in servers %}
 <form action="http://localhost:5000/API/DeleteServer" method="post">
-<input type="hidden" name="servername" value="{{ server.name }}">
+<input type="hidden" name="serverid" value="{{ server.ID }}">
 <p>
     {% if server.Online == True %}
     <a id="status" href="http://localhost:5000/Server-Detail/{{ server.ID }}"><span id="status" title="This server is online">✔️</span> {{ server.name }}</a>
