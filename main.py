@@ -359,6 +359,23 @@ def ServersDatapack(server_id):
             return redirect(url_for('home'))
     return None
 
+@app.route('/Server-Detail/Access/<server_id>')
+def ServersAccess(server_id):
+    if server_id is not None:
+        conn = DatabaseManager.get_db_connection("Singlecraft")
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM Servers WHERE ID = %s", (server_id,))
+        Servers = cursor.fetchone()
+
+        server_properties = Path.home() / "Documents" / "Scripts" / "Mes Scripts" / "SingleCraft" / "Servers" / f"Server-{server_id}" / "server.properties"
+
+        if Servers is not None:
+            return render_template("serverAccess.html", server={"ID": Servers[0], "name": Servers[1], "Version": Servers[3],"Memory": Servers[4], "access": Servers[5]})
+        else:
+            flash("Server not found")
+            return redirect(url_for('home'))
+    return None
+
 @app.route('/API/UpdatePort/<port>/<server_id>', methods=['POST'])
 def update_server_settings(port, server_id):
     server_path = Path.home() / "Documents" / "Scripts" / "Mes Scripts" / "SingleCraft" / "Servers" / f"Server-{server_id}"
@@ -613,7 +630,7 @@ def home():
                 isonline = False
             cursor.execute("SELECT * FROM Servers WHERE ID = %s", (folder.name.replace("Server-", ""),))
             ServerDB = cursor.fetchone()
-            if ServerDB is not None and ServerDB[2] == account[2]:
+            if ServerDB is not None and ServerDB[2] == account[2] or folder.name.replace("Server-", "") in account[5]:
                 server = {
                     "ID": ServerDB[0],
                     "name": ServerDB[1],
