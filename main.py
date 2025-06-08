@@ -157,7 +157,8 @@ def UserAccess(serverid, token: str):
         return True
     return False
 
-def GetUsers():
+@app.route('/API/GetAllUsers/<serverid>', methods=['GET'])
+def GetUsers(serverid):
     conn = DatabaseManager.get_db_connection("Singlecraft")
     cursor = conn.cursor()
     cursor.execute('SELECT Username FROM accounts')
@@ -394,13 +395,10 @@ def RemoveAccess(serverid, userid):
     Account = cursor.fetchone()
 
     if Account[0] is not None and serverid in Account[0] and UserAccess(serverid, request.cookies.get('token')):
-        print(Account[0])
         # | This part of the code is for add the access to serverside in the database | #
         cursor.execute("SELECT UsersAccess FROM Servers WHERE ID = %s", (serverid,))
         UsersAccess = cursor.fetchone()
-        print(UsersAccess)
         UsersAccess = json.loads(UsersAccess[0])
-        print(UsersAccess)
 
 
         if UsersAccess.get("Access"):
@@ -412,9 +410,7 @@ def RemoveAccess(serverid, userid):
         # | This part of the code is for add the access to userside in the database | #
         cursor.execute("SELECT Access FROM Accounts WHERE ID = %s", (userid,))
         Access = cursor.fetchone()
-        print(Access)
         Access = json.loads(Access[0])
-        print(Access)
 
         if Access.get("Access"):
             Access["Access"].remove(serverid)

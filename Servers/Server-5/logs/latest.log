@@ -1,61 +1,63 @@
-[11:15:00] [ServerMain/INFO]: Environment: Environment[sessionHost=https://sessionserver.mojang.com, servicesHost=https://api.minecraftservices.com, name=PROD]
-[11:15:02] [ServerMain/INFO]: Loaded 1373 recipes
-[11:15:02] [ServerMain/ERROR]: Failed to load function utils:gui/zp_locationlistgui
-java.util.concurrent.CompletionException: java.lang.IllegalArgumentException: Whilst parsing command on line 1: Incorrect argument for command at position 56: ...arget run <--[HERE]
-	at java.base/java.util.concurrent.CompletableFuture.encodeThrowable(CompletableFuture.java:315) ~[?:?]
-	at java.base/java.util.concurrent.CompletableFuture.completeThrowable(CompletableFuture.java:320) ~[?:?]
-	at java.base/java.util.concurrent.CompletableFuture$AsyncSupply.run(CompletableFuture.java:1770) ~[?:?]
-	at avu.b(SourceFile:52) ~[server-1.21.5.jar:?]
-	at java.base/java.util.concurrent.ForkJoinTask$RunnableExecuteAction.exec(ForkJoinTask.java:1423) ~[?:?]
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:387) ~[?:?]
-	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1310) ~[?:?]
-	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1841) ~[?:?]
-	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1806) ~[?:?]
-	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:188) ~[?:?]
-Caused by: java.lang.IllegalArgumentException: Whilst parsing command on line 1: Incorrect argument for command at position 56: ...arget run <--[HERE]
-	at hy.a(SourceFile:80) ~[server-1.21.5.jar:?]
-	at amf.a(SourceFile:87) ~[server-1.21.5.jar:?]
-	at java.base/java.util.concurrent.CompletableFuture$AsyncSupply.run(CompletableFuture.java:1768) ~[?:?]
-	... 7 more
-[11:15:02] [ServerMain/ERROR]: Failed to load function utils:gui/zp_experimentsdoorgui
-java.util.concurrent.CompletionException: java.lang.IllegalArgumentException: Whilst parsing command on line 1:  at position 60: ...arget run <--[HERE]
-	at java.base/java.util.concurrent.CompletableFuture.encodeThrowable(CompletableFuture.java:315) ~[?:?]
-	at java.base/java.util.concurrent.CompletableFuture.completeThrowable(CompletableFuture.java:320) ~[?:?]
-	at java.base/java.util.concurrent.CompletableFuture$AsyncSupply.run(CompletableFuture.java:1770) ~[?:?]
-	at avu.b(SourceFile:52) ~[server-1.21.5.jar:?]
-	at java.base/java.util.concurrent.ForkJoinTask$RunnableExecuteAction.exec(ForkJoinTask.java:1423) ~[?:?]
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:387) ~[?:?]
-	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1310) ~[?:?]
-	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1841) ~[?:?]
-	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1806) ~[?:?]
-	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:188) ~[?:?]
-Caused by: java.lang.IllegalArgumentException: Whilst parsing command on line 1:  at position 60: ...arget run <--[HERE]
-	at hy.a(SourceFile:80) ~[server-1.21.5.jar:?]
-	at amf.a(SourceFile:87) ~[server-1.21.5.jar:?]
-	at java.base/java.util.concurrent.CompletableFuture$AsyncSupply.run(CompletableFuture.java:1768) ~[?:?]
-	... 7 more
-[11:15:02] [ServerMain/ERROR]: Couldn't load tag minecraft:tick as it is missing following references: utils:gui/zp_locationlistgui (from file/utils), utils:gui/zp_experimentsdoorgui (from file/utils)
-[11:15:02] [ServerMain/INFO]: Loaded 1484 advancements
-[11:15:02] [Server thread/INFO]: Starting minecraft server version 1.21.5
-[11:15:02] [Server thread/INFO]: Loading properties
-[11:15:02] [Server thread/INFO]: Default game type: SURVIVAL
-[11:15:02] [Server thread/INFO]: Generating keypair
-[11:15:02] [Server thread/INFO]: Starting Minecraft server on *:25565
-[11:15:03] [Server thread/INFO]: Using default channel type
-[11:15:03] [Server thread/INFO]: Preparing level "world"
-[11:15:03] [Server thread/INFO]: Preparing start region for dimension minecraft:overworld
-[11:15:03] [Worker-Main-7/INFO]: Preparing spawn area: 0%
-[11:15:03] [Worker-Main-7/INFO]: Preparing spawn area: 0%
-[11:15:03] [Server thread/INFO]: Time elapsed: 670 ms
-[11:15:03] [Server thread/INFO]: Done (0.930s)! For help, type "help"
-[11:15:53] [Server thread/INFO]: Stopping the server
-[11:15:53] [Server thread/INFO]: Stopping server
-[11:15:53] [Server thread/INFO]: Saving players
-[11:15:53] [Server thread/INFO]: Saving worlds
-[11:15:53] [Server thread/INFO]: Saving chunks for level 'ServerLevel[world]'/minecraft:overworld
-[11:15:53] [Server thread/INFO]: Saving chunks for level 'ServerLevel[world]'/minecraft:the_nether
-[11:15:53] [Server thread/INFO]: Saving chunks for level 'ServerLevel[world]'/minecraft:the_end
-[11:15:53] [Server thread/INFO]: ThreadedAnvilChunkStorage (world): All chunks are saved
-[11:15:53] [Server thread/INFO]: ThreadedAnvilChunkStorage (DIM-1): All chunks are saved
-[11:15:53] [Server thread/INFO]: ThreadedAnvilChunkStorage (DIM1): All chunks are saved
-[11:15:53] [Server thread/INFO]: ThreadedAnvilChunkStorage: All dimensions are saved
+[15:23:32] [ServerMain/INFO]: Environment: Environment[sessionHost=https://sessionserver.mojang.com, servicesHost=https://api.minecraftservices.com, name=PROD]
+[15:23:36] [ServerMain/INFO]: Loaded 1407 recipes
+[15:23:36] [ServerMain/INFO]: Loaded 1520 advancements
+[15:23:36] [Server thread/INFO]: Starting minecraft server version 1.21.6 Pre-Release 3
+[15:23:36] [Server thread/INFO]: Loading properties
+[15:23:36] [Server thread/INFO]: Default game type: SURVIVAL
+[15:23:36] [Server thread/INFO]: Generating keypair
+[15:23:36] [Server thread/INFO]: Starting Minecraft server on *:25565
+[15:23:37] [Server thread/INFO]: Using default channel type
+[15:23:37] [Server thread/INFO]: Preparing level "world"
+[15:23:37] [Server thread/INFO]: Preparing start region for dimension minecraft:overworld
+[15:23:38] [Worker-Main-12/INFO]: Preparing spawn area: 0%
+[15:23:38] [Worker-Main-12/INFO]: Preparing spawn area: 0%
+[15:23:38] [Server thread/INFO]: Time elapsed: 696 ms
+[15:23:38] [Server thread/INFO]: Done (1.143s)! For help, type "help"
+[15:24:02] [User Authenticator #1/INFO]: UUID of player Lucachinou is ed721527-a1a1-454d-95fa-c83077ce84ae
+[15:24:03] [Server thread/INFO]: Lucachinou[/127.0.0.1:61342] logged in with entity id 193 at (6321.197554990234, 78.95488875895019, -860.5594425016182)
+[15:24:03] [Server thread/INFO]: Lucachinou joined the game
+[15:24:39] [Server thread/INFO]: [Lucachinou: Set the weather to clear]
+[15:24:45] [Server thread/INFO]: [Lucachinou: Running function utils:spawn]
+[15:24:47] [Server thread/INFO]: [Lucachinou: Running function utils:spawn]
+[15:31:59] [Server thread/INFO]: [Lucachinou: Set the time to 1000]
+[15:34:58] [Server thread/INFO]: [Lucachinou: Set the weather to clear]
+[15:53:12] [Server thread/INFO]: [Lucachinou: Set own game mode to Spectator Mode]
+[15:53:21] [Server thread/INFO]: [Lucachinou: Set own game mode to Creative Mode]
+[15:59:16] [Server thread/INFO]: Lucachinou has made the advancement [Smells Interesting]
+[16:00:19] [Server thread/INFO]: [Lucachinou: Set own game mode to Spectator Mode]
+[16:00:27] [Server thread/INFO]: [Lucachinou: Set the target tick rate to 80.0 per second]
+[16:00:32] [Server thread/INFO]: [Lucachinou: Set the target tick rate to 9999.0 per second]
+[16:00:33] [Server thread/WARN]: Can't keep up! Is the server overloaded? Running 1002ms or 10020 ticks behind
+[16:01:00] [Server thread/INFO]: [Lucachinou: Set the target tick rate to 20.0 per second]
+[16:01:00] [Server thread/WARN]: Can't keep up! Is the server overloaded? Running 11897ms or 237 ticks behind
+[16:01:02] [Server thread/INFO]: [Lucachinou: Set own game mode to Creative Mode]
+[16:01:07] [Server thread/INFO]: [Lucachinou: Set own game mode to Spectator Mode]
+[16:01:10] [Server thread/INFO]: [Lucachinou: Set the target tick rate to 9999.0 per second]
+[16:01:11] [Server thread/WARN]: Can't keep up! Is the server overloaded? Running 1003ms or 10030 ticks behind
+[16:01:21] [Server thread/INFO]: [Lucachinou: Set the target tick rate to 20.0 per second]
+[16:01:25] [Server thread/INFO]: [Lucachinou: Set own game mode to Creative Mode]
+[16:01:29] [Server thread/INFO]: [Lucachinou: Set the time to 1000]
+[16:01:34] [Server thread/INFO]: Lucachinou has made the advancement [Ice Bucket Challenge]
+[16:01:55] [Server thread/INFO]: Lucachinou has made the advancement [We Need to Go Deeper]
+[16:02:15] [Server thread/INFO]: [Lucachinou: Set own game mode to Spectator Mode]
+[16:02:31] [Server thread/INFO]: [Lucachinou: Set the target tick rate to 9999.0 per second]
+[16:02:32] [Server thread/WARN]: Can't keep up! Is the server overloaded? Running 1011ms or 10112 ticks behind
+[16:02:42] [Server thread/INFO]: [Lucachinou: Set the target tick rate to 20.0 per second]
+[16:02:51] [Server thread/INFO]: [Lucachinou: Set the target tick rate to 9999.0 per second]
+[16:02:52] [Server thread/WARN]: Can't keep up! Is the server overloaded? Running 1003ms or 10034 ticks behind
+[16:03:32] [Server thread/INFO]: [Lucachinou: Set the target tick rate to 20.0 per second]
+[16:03:33] [Server thread/WARN]: Can't keep up! Is the server overloaded? Running 25646ms or 512 ticks behind
+[16:03:33] [Server thread/INFO]: [Lucachinou: Set own game mode to Creative Mode]
+[16:04:27] [Server thread/INFO]: [Lucachinou: Teleported Lucachinou to 5659.840000, 64.080000, -5614.020000]
+[16:05:24] [Server thread/INFO]: [Lucachinou: Teleported Lucachinou to 5656.800000, 64.080000, -5616.180000]
+[16:05:35] [Server thread/INFO]: [Lucachinou: Set the time to 1000]
+[16:11:16] [Server thread/INFO]: Lucachinou lost connection: Disconnected
+[16:11:16] [Server thread/INFO]: Lucachinou left the game
+[16:12:16] [Server thread/INFO]: Server empty for 60 seconds, pausing
+[17:55:59] [User Authenticator #2/INFO]: UUID of player Lucachinou is ed721527-a1a1-454d-95fa-c83077ce84ae
+[17:56:00] [Server thread/INFO]: Lucachinou[/127.0.0.1:56829] logged in with entity id 7831 at (5656.789312070481, 64.08, -5616.213273642353)
+[17:56:00] [Server thread/INFO]: Lucachinou joined the game
+[17:56:15] [Server thread/INFO]: Lucachinou lost connection: Disconnected
+[17:56:15] [Server thread/INFO]: Lucachinou left the game
+[17:57:15] [Server thread/INFO]: Server empty for 60 seconds, pausing
+[18:59:32] [Server thread/WARN]: handleDisconnection() called twice

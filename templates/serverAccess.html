@@ -100,7 +100,7 @@
         }
     </style>
     <script>
-        async function fetchDatapack(url) {
+        async function fetchUsers(url) {
             try {
                 const response = await fetch(url);
                 if (!response.ok) {
@@ -109,40 +109,35 @@
                 const data = await response.json();
                 console.log(data);
 
-                const datapackdiv = document.getElementById("Datapack");
-                datapackdiv.innerHTML = "";
-                data.Disabled.forEach(item => {
+                const div = document.querySelector(".player");
+                div.innerHTML = "";
+                data.forEach(item => {
                     const button = document.createElement("button");
                     button.textContent = item;
                     button.onclick = async () => {
                             try {
-                                const url = "http://localhost:5000/API/EnableFeature/{{ server.ID }}/";
+                                const url = "http://localhost:5000/API/GetAllUsers";
                                 const response = await fetch(url, {
-                                    method: "POST",
-                                    headers: {
-                                        "Content-Type": "application/json"
-                                    },
-                                    body: JSON.stringify({ data: item })
+                                    method: "GET",
                                 });
 
                                 if (!response.ok) {
                                     throw new Error(`Erreur HTTP : ${response.status}`);
                                 }
-                                fetchDatapack("http://localhost:5000/API/GetFeatures/{{ server.ID }}");
                                 const responseData = await response.json();
                                 console.log("Réponse du serveur :", responseData);
                             } catch (error) {
                                 console.error("Erreur lors de l'envoi de la requête :", error);
                             }
                         };
-                    datapackdiv.appendChild(button);
+                    div.appendChild(button);
                 });
             } catch (error) {
                 console.error("Erreur lors de la récupération des données :", error);
             }
         }
 
-        fetchDatapack("http://localhost:5000/API/GetFeatures/{{ server.ID }}");
+        fetchUsers("http://localhost:5000/API/GetAllUsers");
     </script>
 </head>
 <body>
