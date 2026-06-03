@@ -441,7 +441,7 @@ def DeleteServer():
     result = cursor.fetchone()
     if result is None:
         return flask.redirect(flask.url_for('BaseRoute.home'))
-    servers_list = ast.literal_eval(result[1])
+    servers_list = ast.literal_eval(result[1].decode())
     server_index = next((i for i, server in enumerate(servers_list) if server.get("id") == server_id), None)
 
     if server_index is not None:
