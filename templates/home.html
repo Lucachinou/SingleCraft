@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SingleCraft - Home</title>
+    <style>
+        .server-div {
+            display: flex;
+            flex-direction: row;
+            gap: 15px;
+        }
+
+        .server-name {
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="header" style="display: flex;">
+        <p id="PagesTree"><a>Home</a></p>
+        <button id="SettingsButton" style="display: none; margin-left: auto">Settings</button>
+    </div>
+
+    <form id="create-server-form" action="/API/Servers/CreateServer" method="post">
+        <input type="text" name="name" placeholder="Server Name" required>
+        <input id="submit-button" type="submit" value="Create Server">
+    </form>
+
+    <div class="ServersList"></div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        fetch('/API/Servers/CanAccessGlobalSettings')
+            .then(res => res.json())
+            .then(data => {
+                if (data.can_access === true) {
+                    document.getElementById("SettingsButton").style.display = "block";
+                    document.getElementById("SettingsButton").onclick = function () {
+                        window.location.href = "/settings";
+                    }
+                }
+            })
+    })
+
+    document.getElementById("create-server-form").addEventListener("submit", function(e) {
+        e.preventDefault()
+
+        let form_data = new FormData(e.target)
+        fetch("/API/Servers/CreateServer", {body: form_data ,method: "POST"})
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById("submit-button").value = "";
+                getServers();
+            })
+    })
+
+    function getServers() {
+        fetch("/API/Servers/GetServers")
+        .then(res => res.json())
+        .then(data => {
+            let Servers = document.getElementsByClassName("ServersList")[0];
+            Servers.innerHTML = "";
+            for (let server of data.servers) {
+                let Server = document.createElement("div");
+                Server.title = server.id
+
+                let nameElem = document.createElement("p");
+                let ownerElem = document.createElement("p");
+                let deleteBtn = document.createElement("button");
+
+                nameElem.textContent = server.name;
+                ownerElem.textContent = server.owner;
+                deleteBtn.textContent = "Delete Server";
+
+                Server.classList.add("server-div")
+
+                nameElem.classList.add("server-name")
+                ownerElem.classList.add("server-owner")
+                deleteBtn.classList.add("server-delete-button")
+
+                nameElem.onclick = function(evt) {
+                    window.location.href = "/server/" + server.id;
+                }
+
+                deleteBtn.addEventListener("click", ev => {
+                    fetch("/API/Servers/DeleteServer?server_id="+server.id, {method: "DELETE"})
+                        .then(res => res.json())
+                        .then(data => {
+                            getServers();
+                        })
+                });
+
+                Server.appendChild(nameElem);
+                Server.appendChild(ownerElem);
+                Server.appendChild(deleteBtn);
+
+                Servers.appendChild(Server);
+            }
+        })
+    }
+
+    getServers();
+</script>
+</body>
+</html>

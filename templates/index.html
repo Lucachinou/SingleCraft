@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SingleCraft - About</title>
+</head>
+<style>
+    body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 0;
+        height: 100vh;
+        font-family: sans-serif;
+    }
+
+    .main-container {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+        border-radius: 10px;
+        box-shadow: #c5c5c5 1px 1px 5px;
+
+        width: 250px;
+        height: 325px;
+    }
+</style>
+<body>
+    <div class="main-container">
+        <div class="welcome-container" style="display: flex; width: 100%; height: 75px; align-self: start; justify-self: start; align-items: center; justify-content: center;">
+            <div class="welcome-header" style="align-self: start; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; height: 25%; margin-bottom: 0;">
+                <p>Welcome!</p>
+                <div class="welcome-buttons">
+                    <button id="Login-button" style="width: 75px" disabled>Login</button>
+                    <button id="Register-button" style="width: 75px" disabled>Register</button>
+                </div>
+            </div>
+
+            <p id="about-singlecraft" style="height: 25px"></p>
+        </div>
+        <div class="login-container" style="display: none; flex-direction: column; width: 100%; height: 100%; align-items: center; justify-content: center;">
+            <p style="align-self: start">Login to your account.</p>
+
+            <form id="login-form" action="/API/Auth/Login" method="POST">
+                <input type="text" name="username" placeholder="Username" required>
+                <input type="password" name="password" placeholder="********" required>
+                <input style="display: flex; justify-self: center; align-content: center" type="submit" value="Login">
+            </form>
+        </div>
+        <div class="register-container" style="display: none; flex-direction: column; width: 100%; height: 100%; align-items: center; justify-content: center;">
+            <p style="align-self: start;">Register an account.</p>
+
+            <form id="register-form" action="/API/Auth/Register" method="POST">
+                <input type="text" name="email" placeholder="name@domaine.com" required>
+                <input type="text" name="username" placeholder="username" required>
+                <input type="password" name="password" placeholder="********" required>
+                <input style="display: flex; justify-self: center; align-content: center" type="submit" value="Register">
+            </form>
+        </div>
+    </div>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        fetch("/API/Settings/IsAuthAvailable")
+        .then(res => res.json())
+        .then(data => {
+            document.getElementById("Login-button").disabled = true;
+            document.getElementById("Register-button").disabled = true;
+            if (data.login === "true") {
+                document.getElementById("Login-button").disabled = false;
+            }
+            if (data.register === "true") {
+                document.getElementById("Register-button").disabled = false;
+            }
+        })
+    })
+
+    document.getElementById("login-form").addEventListener("submit", function(e) {
+        e.preventDefault();
+
+        fetch("/API/Auth/Login", {method: "POST", body: new FormData(this)})
+            .then(res => {
+                if (res.redirected) {
+                    window.location.href = res.url;
+                    return;
+                }
+                return res.json();
+            })
+            .then(data => {
+                if (data.message === "INVALID_CREDENTIALS") {
+                    console.log("Invalid Credentials");
+                }
+            })
+    })
+
+    document.getElementById("Login-button").addEventListener("click", function() {
+        document.title = "SingleCraft - Login";
+        document.getElementsByClassName("login-container")[0].style.display = "flex";
+        document.getElementsByClassName("register-container")[0].style.display = "none";
+    })
+
+    document.getElementById("Register-button").addEventListener("click", function() {
+        document.title = "SingleCraft - Register";
+        document.getElementsByClassName("login-container")[0].style.display = "none";
+        document.getElementsByClassName("register-container")[0].style.display = "flex";
+    })
+</script>
+</body>
+</html>

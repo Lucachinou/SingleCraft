@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SingleCraft - Server</title>
+    <style>
+        .server-console-content {
+            width: 350px;
+            height: 250px;
+            overflow-x: hidden;
+            overflow-y: scroll;
+            border: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+    <div class="header" style="display: flex;">
+        <p id="PagesTree"><a href="/home">Home</a> > <a id="ServerName">Loading</a> </p>
+        <button id="SettingsButton" style="display: none; margin-left: auto">Settings</button>
+    </div>
+
+    <div class="sidebar">
+        <button id="server-settings" disabled>Settings</button>
+    </div>
+
+    <div>
+        <button id="start-server">Start</button>
+        <button id="stop-server">Stop</button>
+    </div>
+
+    <div class="server-console">
+        <div class="server-console-content"></div>
+        <input type="text" id="server-command-input" placeholder="give @a minecraft:dirt 64">
+    </div>
+    <select id="server-jar-dropdown"></select>
+    <input type="text" id="server-jar" placeholder="default.jar">
+    <input type="text" id="server-port" placeholder="25565">
+    <button id="clear-console">Clear console history</button>
+
+<script>
+    function getServerId() {
+        return window.location.href.split("/").findLast(part => part !== "");
+    }
+
+    function appendConsoleLine(consoleDiv, message) {
+        let line = document.createElement("p");
+        line.textContent = message.line;
+        line.dataset.date = message.date;
+
+        consoleDiv.appendChild(line);
+    }
+
+    document.getElementById("server-port").addEventListener('keydown', function (evt) {
+        if (evt.key === "Enter") {
+            fetch('/API/Servers/setServerPort?server_id='+getServerId()+'&server_port='+this.value, {method: "POST"})
+                .then(res => res.json())
+                .then(data => {
+                    console.log(data);
+            })
+        }
+    })
+
+    document.addEventListener('DOMContentLoaded', function () {
+        fetch('/API/Servers/getName?server_id=' + getServerId())
+        .then(res => res.json())
+        .then(data => {
+            if (data.name !== undefined) {
+                document.title = "SingleCraft - "+data.name;
+                document.getElementById("ServerName").textContent = data.name;
+            } else {
+                console.error("Cannot find server name, try to refresh the page.");
+                document.title = "SingleCraft - Unknown Server";
+                document.getElementById("ServerName").textContent = "Unknown Server";
+            }
+        })
+
+        fetch('/API/Servers/CanAccessGlobalSettings')
+        .then(res => res.json())
+        .then(data => {
+            if (data.can_access === true) {
+                document.getElementById("SettingsButton").style.display = "block";
+                document.getElementById("SettingsButton").onclick = function() {
+                    window.location.href = "/settings";
+                }
+            }
+        })
+
+        //TODO: That's temp while server settings doesn't fully finished
+        fetch('/API/Servers/setServerPort?server_id='+getServerId())
+            .then(res => res.json())
+            .then(data => {
+                let serverPortInput = document.getElementById("server-port");
+                serverPortInput.value = data.port;
+            });
+
+        fetch('/API/Settings/GetInstalledVersion')
+        .then(res => res.json())
+        .then(data => {
+            let dropdown = document.getElementById("server-jar-dropdown");
+            for (data of data.version) {
+                let option = document.createElement("option");
+                option.textContent = data.name;
+
+                dropdown.appendChild(option);
+            }
+        })
+    });
+
+    document.getElementById("clear-console").addEventListener("click", function () {
+        fetch('/API/Servers/ClearConsoleHistory?server_id='+getServerId(), {method: "DELETE"})
+        document.getElementsByClassName("server-console-content")[0].innerHTML = "";
+    });
+
+    document.getElementById("server-command-input").addEventListener("keydown", function(e) {
+        if (e.key === "Enter") {
+            let command = e.target.value;
+            let serverId = getServerId();
+
+            fetch("/API/Servers/sendCommand?server_id="+serverId+"&command="+command)
+                .then(res => res.json())
+                .then(data => {
+                    e.target.value = "";
+            })
+        }
+    })
+
+    document.getElementById("start-server").addEventListener("click", function() {
+        fetch("/API/Servers/Start?server_id=" + getServerId())
+            .then(res => res.json())
+            .then(data => {
+                console.log(data);
+            })
+    })
+    document.getElementById("stop-server").addEventListener("click", function() {
+        fetch("/API/Servers/Stop?server_id=" + getServerId())
+            .then(res => res.json())
+            .then(data => {
+                console.log(data);
+            })
+    })
+
+    document.getElementById("server-jar").addEventListener("keydown", function(e) {
+        if (e.key === "Enter") {
+            fetch("/API/Servers/ChangeJar?server_id="+getServerId()+"&server_jar="+e.target.value)
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById("server-jar-dropdown").value = "Unknown";
+            })
+        }
+    });
+
+    document.getElementById("server-jar-dropdown").addEventListener("change", function(e) {
+        fetch("/API/Servers/ChangeJar?server_id="+getServerId()+"&server_jar="+e.target.value)
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById("server-jar").value = e.target.value;
+            })
+    });
+
+    function getServerJar() {
+        let input = document.getElementById("server-jar");
+
+        fetch("/API/Servers/getServerJar?server_id="+getServerId())
+        .then(res => res.json())
+        .then(data => {
+            input.value = data.jar;
+        })
+    }
+
+    function getConsoleUpdate() {
+        let console_div = document.getElementsByClassName("server-console-content")[0];
+        let last_elem = console_div.lastElementChild;
+        let last_elem_date = last_elem ? last_elem.dataset.date : "";
+
+        fetch('/API/Servers/getConsoleUpdate?server_id=' + getServerId() + '&last_elem_date=' + encodeURIComponent(last_elem_date))
+            .then(res => res.json())
+            .then(data => {
+                if (!data.success || !Array.isArray(data.message) || data.message.length === 0) {
+                    return;
+                }
+
+                let scrollHeight = console_div.scrollHeight;
+                data.message.forEach(message => appendConsoleLine(console_div, message));
+
+                if (scrollHeight === 0 || console_div.scrollTop + console_div.clientHeight >= scrollHeight) {
+                    console_div.scrollTop = console_div.scrollHeight;
+                }
+            })
+    }
+
+    getConsoleUpdate();
+    setInterval(getConsoleUpdate, 1000);
+    getServerJar()
+</script>
+</body>
+</html>

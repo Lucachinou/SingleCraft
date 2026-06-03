@@ -1,0 +1,9 @@
+servers/*
+venv/*
+jar/*
+*/__pycache__/*
+.idea
+venv
+.env
+.DS_Store
+.pyc

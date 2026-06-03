@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SingleCraft - Unknwon Server Settings</title>
+</head>
+<body>
+    <div class="header" style="display: flex;">
+        <p id="PagesTree"><a href="/home">Home</a> > <a id="ServerName">Loading...</a> > <a>Settings</a> </p>
+        <button id="SettingsButton" style="display: block; margin-left: auto" disabled>Settings</button>
+    </div>
+
+    <div class="settings"></div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        fetch('/API/Settings/GetSettings')
+            .then(res => res.json())
+            .then(data => {
+                let settingsDiv = document.getElementsByClassName("settings")[0];
+                for (let setting of data.settings) {
+                    let settingDiv = document.createElement("div");
+                    let label = document.createElement("label");
+                    let input = document.createElement("input");
+
+                    label.textContent = setting[1];
+                    //input.type = setting.type === "boolean" ? "checkbox" : "text";
+                    input.value = setting[2];
+                    //if (setting.type === "boolean") {
+                    //    input.checked = setting.value;
+                    //}
+
+                    input.addEventListener("keydown", (evt) => {
+                        if (evt.key === "Enter") {
+                            evt.preventDefault()
+                            let value = input.type === "checkbox" ? input.checked : input.value;
+                            fetch("/API/Settings/UpdateSetting?setting_id="+setting[0]+"&setting_value="+evt.target.value, {method: "POST", body: JSON.stringify({value: value}), headers: {"Content-Type": "application/json"}})
+                                .then(res => res.json())
+                                .then(data => {
+                                    console.log(data);
+                                })
+                        }
+                    })
+
+                    settingDiv.appendChild(label);
+                    settingDiv.appendChild(input);
+                    settingsDiv.appendChild(settingDiv);
+                }
+            })
+
+        fetch('/API/Servers/CanAccessGlobalSettings')
+            .then(res => res.json())
+            .then(data => {
+                if (data.can_access === true) {
+                    document.getElementById("SettingsButton").style.display = "block";
+                    document.getElementById("SettingsButton").onclick = function () {
+                        window.location.href = "/settings";
+                    }
+                }
+            })
+    })
+</script>
+</body>
+</html>
