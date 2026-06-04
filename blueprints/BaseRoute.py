@@ -28,9 +28,11 @@ def get_server(server_id):
     token = flask.request.cookies.get("token")
     if token is None:
         return flask.redirect(flask.url_for("BaseRoute.index"))
-    rank = database.getPermission(database.GetUserIDByToken(token), int(server_id))
-    if rank is None:
-        return flask.redirect(flask.url_for("BaseRoute.home"))
+    rank = database.getUserRank(database.GetUserIDByToken(token))
+    permission = database.getPermission(database.GetUserIDByToken(token), int(server_id))
+    if permission is None:
+        if rank != "ADMIN":
+            return flask.redirect(flask.url_for("BaseRoute.home"))
     return flask.render_template("server.html")
 
 @bp.get("/server/<server_id>/settings")
@@ -43,9 +45,11 @@ def get_server_settings(server_id):
     except (ValueError, TypeError):
         return flask.jsonify({"success": False, "message": "INVALID_PARAMETERS"})
 
-    permission = database.getPermission(database.GetUserIDByToken(token), server_id)
+    rank = database.getUserRank(database.GetUserIDByToken(token))
+    permission = database.getPermission(database.GetUserIDByToken(token), int(server_id))
     if permission is None:
-        return flask.redirect(flask.url_for("BaseRoute.home"))
+        if rank != "ADMIN":
+            return flask.redirect(flask.url_for("BaseRoute.home"))
     return flask.render_template("server_settings.html")
 
 @bp.get("/home")
