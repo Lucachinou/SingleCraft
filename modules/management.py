@@ -24,7 +24,7 @@ def start_server(server_id, jar_name):
 
     date = datetime.datetime.now()
 
-    server_dir = SERVER_PATH / f"Server-{server_id}"
+    server_dir = SERVER_PATH / f"server-{server_id}"
     jar_path = JAR_PATH / jar_name
 
     if not jar_path.exists():
