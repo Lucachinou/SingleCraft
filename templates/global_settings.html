@@ -16,7 +16,7 @@
         <form action="/API/Settings/AddInstalledVersion" id="jar-form" method="post">
             <input name="name" placeholder="Minecraft 26.1" required>
             <input name="version" placeholder="default.jar" required>
-            <input name="start_command" value="java -Xmx{max_memory} -jar {file_name}" required>
+            <input name="start_command" value="java -Xmx{max_memory} -jar {file_name} nogui" required>
             <button type="submit">Add Jar</button>
         </form>
     </div>

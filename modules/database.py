@@ -191,7 +191,7 @@ def addInstalledVersion(name: str, file_name: str, start_command="java -Xmx{max_
 def getInstalledVersion():
     conn = get_db_connection(os.getenv("DATABASE_NAME"))
     cursor = conn.cursor()
-    cursor.execute('SELECT * FROM InstalledVersions')
+    cursor.execute('SELECT Name, file_name, start_command FROM InstalledVersions')
     result = cursor.fetchall()
     cursor.close()
     conn.close()

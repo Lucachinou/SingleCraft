@@ -42,8 +42,7 @@ def start_server(server_id, jar_name):
             servers_logs[server_id].append(f"[{date.strftime('%H:%M:%S')}] [SingleCraft/WARN] Spigot server are currently in experimental. Please use RCon instead of stdin.")
 
     if "pumpkin" in jar_name:
-        servers_logs[server_id].append(f"[{date.strftime('%H:%M:%S')}] [SingleCraft/ERROR]Pumpkin server currently not supported!")
-        return False
+        servers_logs[server_id].append(f"[{date.strftime('%H:%M:%S')}] [SingleCraft/WARN] Pumpkin server support is experimental!")
 
     server_dir.mkdir(parents=True, exist_ok=True)
 
@@ -51,11 +50,20 @@ def start_server(server_id, jar_name):
     cursor = conn.cursor()
     cursor.execute("SELECT Memory FROM servers WHERE ID = %s", (server_id,))
     MaxMemory = cursor.fetchone()
+
+    cursor.execute("SELECT Name, file_name, start_command FROM InstalledVersions WHERE Name = %s LIMIT 1", (database.getServerNameFromID(server_id),))
+    result = cursor.fetchone()
     cursor.close()
     conn.close()
 
+    if not result:
+        servers_logs[server_id].append(f"[{date.strftime('%H:%M:%S')}] [SingleCraft/ERROR] Server version not found in database.")
+        return False
+
+    command = result[2].format(max_memory=MaxMemory[0], file_name=str(jar_path))
+
     process = subprocess.Popen(
-        ["java", f"-Xmx{MaxMemory[0]}M", "-Xms256M", "-jar", str(jar_path), "nogui"],
+        [command],
         cwd=server_dir,
         stdin=subprocess.PIPE,
         stdout=subprocess.PIPE,

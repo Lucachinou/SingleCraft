@@ -2,6 +2,7 @@ servers/*
 venv/*
 jar/*
 */__pycache__/*
+__pycache__/*ss
 .idea
 venv
 .env
