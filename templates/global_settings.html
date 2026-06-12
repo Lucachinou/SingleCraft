@@ -13,7 +13,12 @@
     <div class="settings"></div>
 
     <div class="settings-jar">
-
+        <form action="/API/Settings/AddInstalledVersion" id="jar-form" method="post">
+            <input name="name" placeholder="Minecraft 26.1" required>
+            <input name="version" placeholder="default.jar" required>
+            <input name="start_command" value="java -Xmx{max_memory} -jar {file_name}" required>
+            <button type="submit">Add Jar</button>
+        </form>
     </div>
 
 <script>
@@ -51,6 +56,29 @@
                     settingsDiv.appendChild(settingDiv);
                 }
             })
+
+        fetch('/API/Settings/GetInstalledVersion')
+        .then(res => res.json())
+        .then(data => {
+            let jar_list = document.getElementsByClassName("settings-jar")[0];
+            for (data of data.version) {
+                let div = document.createElement("div");
+                let name = document.createElement("p");
+                let version = document.createElement("p");
+                let start_command = document.createElement("p");
+
+                name.textContent = data[0];
+                version.textContent = data[1];
+                start_command.textContent = data[2];
+
+                div.id = "jar-info"
+
+                div.appendChild(name);
+                div.appendChild(version);
+                div.appendChild(start_command);
+                jar_list.appendChild(div);
+            }
+        })
     })
 </script>
 </body>

@@ -9,6 +9,9 @@
 3. execute `flask --app SingleCraft.py run --host 0.0.0.0 --port 5000` to start the web server.
 4. Open your browser and navigate to `http://localhost:5000` to access the SingleCraft dashboard.
 
+## Known Issues
+- the clear console clear console for a brief moment
+
 ## Features
 * Create and manage multiple Minecraft servers from a single interface.
 * Start, stop, and restart servers with ease.

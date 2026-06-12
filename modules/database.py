@@ -77,7 +77,7 @@ def getPermission(user_id: int, server_id: int):
     if result is None:
         return None
 
-    for server in ast.literal_eval(result[0][0].decode()):
+    for server in ast.literal_eval(result[0][0]):
         if server.get('id') == server_id:
             return server.get('rank')
     return None
@@ -287,4 +287,3 @@ def SetupDatabase():
     cursor.close()
     conn.close()
     print("#---------- DATABASE SETUP COMPLETE ----------#")
-

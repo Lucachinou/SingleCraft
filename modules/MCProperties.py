@@ -28,9 +28,8 @@ class Properties(dict):
         return str(self.get(key))
 
     def setValue(self, SelectedKey: str, NewValue: str):
-        for key, value in self.items():
-            self[SelectedKey] = NewValue
-            return self[SelectedKey]
+        self[SelectedKey] = NewValue
+        return self[SelectedKey]
 
     def RemoveValue(self, SelectedKey: str, ValueToDelete):
         for key, value in self.items():

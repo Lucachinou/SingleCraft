@@ -153,6 +153,27 @@ def getServerPort():
     properties = MCProperties.Properties(str(servers_path / f"server-{server_id}/server.properties"))
     return flask.jsonify({"success": True, "port": properties.getValue("server-port")})
 
+@bp.get('/getServerProperties')
+def getServerProperties():
+    server_id = flask.request.args.get('server_id')
+    token = flask.request.cookies.get('token')
+    if token is None:
+        return flask.jsonify({"success": False, "message": "UNAUTHORIZED"})
+    if server_id is None:
+        return flask.jsonify({"success": False, "message": "INVALID_PARAMETERS"})
+    try:
+        server_id = int(server_id)
+    except (ValueError, TypeError):
+        return flask.jsonify({"success": False, "error": "INVALID_PARAMETERS"})
+    rank = database.getPermission(database.GetUserIDByToken(token), server_id)
+    if rank != "owner":
+        if rank != "admin":
+            if rank != "mod":
+                return flask.jsonify({"success": False, "message": "UNAUTHORIZED"})
+
+    properties = MCProperties.Properties(str(servers_path / f"server-{server_id}/server.properties"))
+    return flask.jsonify({"success": True, "server": properties})
+
 @bp.get('/getServerJar')
 def getServerJar():
     server_id = flask.request.args.get('server_id')

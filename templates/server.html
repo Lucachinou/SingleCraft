@@ -99,7 +99,8 @@
             let dropdown = document.getElementById("server-jar-dropdown");
             for (data of data.version) {
                 let option = document.createElement("option");
-                option.textContent = data.name;
+                option.textContent = data[0];
+                option.version = data[1];
 
                 dropdown.appendChild(option);
             }
@@ -150,11 +151,13 @@
     });
 
     document.getElementById("server-jar-dropdown").addEventListener("change", function(e) {
-        fetch("/API/Servers/ChangeJar?server_id="+getServerId()+"&server_jar="+e.target.value)
+        let server_jar_input = document.getElementById("server-jar");
+
+        fetch("/API/Servers/ChangeJar?server_id="+getServerId()+"&server_jar="+e.target.selectedOptions[0].version)
             .then(res => res.json())
             .then(data => {
-                document.getElementById("server-jar").value = e.target.value;
-            })
+                server_jar_input.value = e.target.selectedOptions[0].version;
+        })
     });
 
     function getServerJar() {
