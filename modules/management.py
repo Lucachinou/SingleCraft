@@ -51,16 +51,15 @@ def start_server(server_id, jar_name):
     cursor.execute("SELECT Memory FROM servers WHERE ID = %s", (server_id,))
     MaxMemory = cursor.fetchone()
 
-    cursor.execute("SELECT Name, file_name, start_command FROM InstalledVersions WHERE Name = %s LIMIT 1", (database.getServerNameFromID(server_id),))
+    cursor.execute("SELECT start_command FROM InstalledVersions WHERE file_name = %s", (jar_name,))
     result = cursor.fetchone()
     cursor.close()
     conn.close()
-
-    if not result:
+    if result is None:
         servers_logs[server_id].append(f"[{date.strftime('%H:%M:%S')}] [SingleCraft/ERROR] Server version not found in database.")
-        return False
+        result = f"java -Xmx{MaxMemory[0]}M -jar {jar_path} nogui"
 
-    command = result[2].format(max_memory=MaxMemory[0], file_name=str(jar_path))
+    command = result.format(max_memory=MaxMemory[0], file_name=str(jar_path))
 
     process = subprocess.Popen(
         [command],
