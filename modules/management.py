@@ -6,6 +6,7 @@ from mcrcon import MCRcon
 from dotenv import load_dotenv
 import atexit
 from threading import Thread
+import shlex
 
 from modules.MCProperties import Properties
 from modules import database
@@ -64,7 +65,7 @@ def start_server(server_id, jar_name):
     command = result.format(max_memory=MaxMemory[0], file_name=str(jar_path))
 
     process = subprocess.Popen(
-        [command],
+        shlex.split(command),
         cwd=server_dir,
         stdin=subprocess.PIPE,
         stdout=subprocess.PIPE,
