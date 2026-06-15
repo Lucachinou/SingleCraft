@@ -58,6 +58,8 @@ def start_server(server_id, jar_name):
     if result is None:
         servers_logs[server_id].append(f"[{date.strftime('%H:%M:%S')}] [SingleCraft/ERROR] Server version not found in database.")
         result = f"java -Xmx{MaxMemory[0]}M -jar {jar_path} nogui"
+    else:
+        result = result[0]
 
     command = result.format(max_memory=MaxMemory[0], file_name=str(jar_path))
 
