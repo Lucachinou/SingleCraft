@@ -435,7 +435,11 @@ def CreateServer():
     result = cursor.fetchone()
     if result is None:
         return flask.jsonify({"success": False, "servers": "UNKNOWN"})
-    servers_list = ast.literal_eval(result[0].decode())
+
+    if isinstance(result[0], bytes):
+        servers_list = ast.literal_eval(result[0].decode())
+    else:
+        servers_list = ast.literal_eval(result[0])
 
     servers_list.append({"id": server_id, "name": server_name, "owner": user_id, 'rank': "owner"})
     cursor.execute("UPDATE Accounts SET Access = %s WHERE Token = %s", (str(servers_list), token,))
@@ -462,7 +466,10 @@ def DeleteServer():
     result = cursor.fetchone()
     if result is None:
         return flask.redirect(flask.url_for('BaseRoute.home'))
-    servers_list = ast.literal_eval(result[1].decode())
+    if isinstance(result[0], bytes):
+        servers_list = ast.literal_eval(result[0].decode())
+    else:
+        servers_list = ast.literal_eval(result[0])
     server_index = next((i for i, server in enumerate(servers_list) if server.get("id") == server_id), None)
 
     if server_index is not None:

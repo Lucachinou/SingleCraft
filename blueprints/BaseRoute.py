@@ -1,4 +1,6 @@
 import datetime
+from pathlib import Path
+
 import flask
 
 from modules import database
@@ -58,3 +60,9 @@ def home():
         return flask.render_template("home.html")
     else:
         return flask.redirect(flask.url_for("BaseRoute.index"))
+
+@bp.get("/mcp")
+def mcp():
+    # TODO: Implement new secure routes for stop and start before implement MCP
+    return flask.jsonify({"work_in_progress": True})
+    return flask.send_file(Path(__file__).parent.parent / "mcp.json")
