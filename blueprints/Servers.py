@@ -1,5 +1,6 @@
 import ast
 import datetime
+import json
 import os
 import shutil
 from pathlib import Path
@@ -445,7 +446,7 @@ def CreateServer():
         servers_list = ast.literal_eval(result[0])
 
     servers_list.append({"id": server_id, "name": server_name, "owner": user_id, 'rank': "owner"})
-    cursor.execute("UPDATE Accounts SET Access = %s WHERE Token = %s", (str(servers_list), token,))
+    cursor.execute("UPDATE Accounts SET Access = %s WHERE Token = %s", (json.dumps(servers_list), token,))
     conn.commit()
     cursor.close()
     conn.close()
@@ -482,7 +483,7 @@ def DeleteServer():
         conn = database.get_db_connection(os.getenv("DATABASE_NAME"))
         cursor = conn.cursor()
         cursor.execute("DELETE FROM servers WHERE ID = %s", (server_id,))
-        cursor.execute("UPDATE Accounts SET Access = %s WHERE Token = %s", (str(servers_list), token,))
+        cursor.execute("UPDATE Accounts SET Access = %s WHERE Token = %s", (json.dumps(servers_list), token,))
         conn.commit()
         cursor.close()
         conn.close()
