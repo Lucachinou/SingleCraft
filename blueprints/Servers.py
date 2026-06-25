@@ -399,7 +399,10 @@ def GetServers():
     cursor.close()
     conn.close()
 
-    servers_list = ast.literal_eval(result[0].decode())
+    if isinstance(result[0], bytes):
+        servers_list = ast.literal_eval(result[0].decode())
+    else:
+        servers_list = ast.literal_eval(result[0])
     for server in servers_list:
         server['owner'] = database.GetUsernameByID(int(server['owner']))
     return flask.jsonify({"servers": servers_list})
