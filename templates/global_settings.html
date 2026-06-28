@@ -60,7 +60,7 @@
         })
     }
 
-    document.getElementById("add-jar")[0].addEventListener("click", (e) => {
+    document.getElementById("add-jar").addEventListener("click", (e) => {
         fetch("/API/Settings/AddInstalledVersion", {method: "POST"})
         .then(res => {
             getInstalledVersion();
