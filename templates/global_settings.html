@@ -13,15 +13,54 @@
     <div class="settings"></div>
 
     <div class="settings-jar">
-        <form action="/API/Settings/AddInstalledVersion" id="jar-form" method="post">
+        <form id="jar-form" method="post">
             <input name="name" placeholder="Minecraft 26.1" required>
             <input name="version" placeholder="default.jar" required>
             <input name="start_command" value="java -Xmx{max_memory} -jar {file_name} nogui" required>
             <button type="submit">Add Jar</button>
         </form>
+        <div class="jar-list"></div>
     </div>
 
 <script>
+    function getInstalledVersion() {
+        fetch('/API/Settings/GetInstalledVersion')
+        .then(res => res.json())
+        .then(data => {
+            let settings_jar = document.getElementsByClassName("settings-jar")[0];
+            let jar_list = document.getElementsByClassName("jar-list")[0];
+            jar_list.innerHTML = '';
+            for (data of data.version) {
+                let div = document.createElement("div");
+                let name = document.createElement("p");
+                let version = document.createElement("p");
+                let start_command = document.createElement("p");
+                let delete_button = document.createElement("button");
+
+                name.textContent = data[0];
+                version.textContent = data[1];
+                start_command.textContent = data[2];
+                delete_button.textContent = "Delete";
+
+                delete_button.addEventListener("click", () => {
+                    fetch("/API/Settings/RemoveInstalledVersion?name="+data[0], {method: "DELETE"})
+                    .then(res => {
+                        getInstalledVersion();
+                    })
+                })
+
+                div.id = "jar-info"
+
+                div.appendChild(name);
+                div.appendChild(version);
+                div.appendChild(start_command);
+                div.appendChild(delete_button);
+                jar_list.appendChild(div);
+            }
+        })
+    }
+
+
     document.addEventListener('DOMContentLoaded', () => {
         fetch('/API/Settings/GetSettings')
             .then(res => res.json())
@@ -57,28 +96,7 @@
                 }
             })
 
-        fetch('/API/Settings/GetInstalledVersion')
-        .then(res => res.json())
-        .then(data => {
-            let jar_list = document.getElementsByClassName("settings-jar")[0];
-            for (data of data.version) {
-                let div = document.createElement("div");
-                let name = document.createElement("p");
-                let version = document.createElement("p");
-                let start_command = document.createElement("p");
-
-                name.textContent = data[0];
-                version.textContent = data[1];
-                start_command.textContent = data[2];
-
-                div.id = "jar-info"
-
-                div.appendChild(name);
-                div.appendChild(version);
-                div.appendChild(start_command);
-                jar_list.appendChild(div);
-            }
-        })
+        getInstalledVersion();
     })
 </script>
 </body>

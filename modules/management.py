@@ -37,13 +37,10 @@ def start_server(server_id, jar_name):
 
     if "spigot" in jar_name:
         if database.GetSetting(1) == "True":
-            servers_logs[server_id].append(f"[{date.strftime('%H:%M:%S')}] [SingleCraft/WARN] Spigot server currently not supported due to a bug that affect stdin.")
+            servers_logs[server_id].append(f"[{date.strftime('%H:%M:%S')}] [SingleCraft/WARN] Spigot server currently not supported due to a bug that affect commands.")
             return False
         else:
             servers_logs[server_id].append(f"[{date.strftime('%H:%M:%S')}] [SingleCraft/WARN] Spigot server are currently in experimental. Please use RCon instead of stdin.")
-
-    if "pumpkin" in jar_name:
-        servers_logs[server_id].append(f"[{date.strftime('%H:%M:%S')}] [SingleCraft/WARN] Pumpkin server support is experimental!")
 
     server_dir.mkdir(parents=True, exist_ok=True)
 
@@ -60,6 +57,7 @@ def start_server(server_id, jar_name):
         servers_logs[server_id].append(f"[{date.strftime('%H:%M:%S')}] [SingleCraft/ERROR] Server version not found in database.")
         result = f"java -Xmx{MaxMemory[0]}M -jar {jar_path} nogui"
     else:
+        servers_logs[server_id].append(f"[{date.strftime('%H:%M:%S')}] [SingleCraft/WARN] Custom files are currently in experimental. Please report any issues you have!")
         result = result[0]
 
     command = result.format(max_memory=MaxMemory[0], file_name=str(jar_path))
@@ -130,7 +128,7 @@ def stop_all_servers():
         stop_server(server)
 
 def clear_console_history(server_id):
-    if servers_logs.get(server_id) is None or servers_logs.get(server_id) == []:
+    if not isinstance(servers_logs.get(server_id), list):
         return False
     servers_logs[server_id] = []
     return True

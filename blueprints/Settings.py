@@ -57,7 +57,7 @@ def AddInstalledVersion():
 @bp.delete("/RemoveInstalledVersion")
 def RemoveInstalledVersion():
     token = flask.request.cookies.get("token")
-    name = flask.request.form.get("name")
+    name = flask.request.args.get("name")
     if not name:
         return flask.jsonify({"success": False, "message": "INVALID_PARAMETERS"})
     if not token:
