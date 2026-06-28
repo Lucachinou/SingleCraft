@@ -13,12 +13,12 @@
     <div class="settings"></div>
 
     <div class="settings-jar">
-        <form id="jar-form" method="post">
-            <input name="name" placeholder="Minecraft 26.1" required>
-            <input name="version" placeholder="default.jar" required>
-            <input name="start_command" value="java -Xmx{max_memory} -jar {file_name} nogui" required>
+        <div id="jar-form">
+            <input id="jar-name" placeholder="Minecraft 26.1" required>
+            <input id="jar-version" placeholder="default.jar" required>
+            <input id="jar-start_command" value="java -Xmx{max_memory} -jar {file_name} nogui" required>
             <button id="add-jar">Add Jar</button>
-        </form>
+        </div>
         <div class="jar-list"></div>
     </div>
 
@@ -27,7 +27,6 @@
         fetch('/API/Settings/GetInstalledVersion')
         .then(res => res.json())
         .then(data => {
-            let settings_jar = document.getElementsByClassName("settings-jar")[0];
             let jar_list = document.getElementsByClassName("jar-list")[0];
             jar_list.innerHTML = '';
             for (data of data.version) {
@@ -42,8 +41,9 @@
                 start_command.textContent = data[2];
                 delete_button.textContent = "Delete";
 
+                const jar_name = data[0];
                 delete_button.addEventListener("click", () => {
-                    fetch("/API/Settings/RemoveInstalledVersion?name="+data[0], {method: "DELETE"})
+                    fetch("/API/Settings/RemoveInstalledVersion?name="+jar_name, {method: "DELETE"})
                     .then(res => {
                         getInstalledVersion();
                     })
@@ -61,7 +61,15 @@
     }
 
     document.getElementById("add-jar").addEventListener("click", (e) => {
-        fetch("/API/Settings/AddInstalledVersion", {method: "POST"})
+        fetch("/API/Settings/AddInstalledVersion", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(
+                {"name": document.getElementById("jar-name").value,
+                    "version": document.getElementById("jar-version").value,
+                    "start_command": document.getElementById("jar-start_command").value
+                })
+        })
         .then(res => {
             getInstalledVersion();
         })

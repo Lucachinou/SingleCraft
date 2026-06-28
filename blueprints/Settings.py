@@ -39,10 +39,12 @@ def GetInstalledVersion():
 
 @bp.post("/AddInstalledVersion")
 def AddInstalledVersion():
+    data = flask.request.get_json()
+
     token = flask.request.cookies.get("token")
-    name = flask.request.form.get("name")
-    version = flask.request.form.get("version")
-    start_command = flask.request.form.get("start_command")
+    name = data.get("name")
+    version = data.get("version")
+    start_command = data.get("start_command")
     if not name or not version or not start_command:
         return flask.jsonify({"success": False, "message": "INVALID_PARAMETERS"})
 
