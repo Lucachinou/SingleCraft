@@ -17,7 +17,7 @@
             <input name="name" placeholder="Minecraft 26.1" required>
             <input name="version" placeholder="default.jar" required>
             <input name="start_command" value="java -Xmx{max_memory} -jar {file_name} nogui" required>
-            <button type="submit">Add Jar</button>
+            <button id="add-jar">Add Jar</button>
         </form>
         <div class="jar-list"></div>
     </div>
@@ -60,6 +60,12 @@
         })
     }
 
+    document.getElementsByClassName("add-jar")[0].addEventListener("click", (e) => {
+        fetch("/API/Settings/AddInstalledVersion", {method: "POST"})
+        .then(res => {
+            getInstalledVersion();
+        })
+    })
 
     document.addEventListener('DOMContentLoaded', () => {
         fetch('/API/Settings/GetSettings')
