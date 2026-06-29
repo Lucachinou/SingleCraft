@@ -77,7 +77,12 @@ def getPermission(user_id: int, server_id: int):
     if result is None:
         return None
 
-    for server in ast.literal_eval(result[0][0]):
+    if isinstance(result[0][0], bytes):
+        servers_list = ast.literal_eval(result[0][0].decode())
+    else:
+        servers_list = ast.literal_eval(result[0][0])
+
+    for server in servers_list:
         if server.get('id') == server_id:
             return server.get('rank')
     return None

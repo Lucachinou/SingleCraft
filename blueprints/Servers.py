@@ -470,7 +470,7 @@ def DeleteServer():
     result = cursor.fetchone()
     if result is None:
         return flask.redirect(flask.url_for('BaseRoute.home'))
-    if isinstance(result[0], bytes):
+    if isinstance(result[1], bytes):
         servers_list = ast.literal_eval(result[1].decode())
     else:
         servers_list = ast.literal_eval(result[1])

@@ -57,8 +57,10 @@ def start_server(server_id, jar_name):
         servers_logs[server_id].append(f"[{date.strftime('%H:%M:%S')}] [SingleCraft/ERROR] Server version not found in database.")
         result = f"java -Xmx{MaxMemory[0]}M -jar {jar_path} nogui"
     else:
-        servers_logs[server_id].append(f"[{date.strftime('%H:%M:%S')}] [SingleCraft/WARN] Custom files are currently in experimental. Please report any issues you have!")
         result = result[0]
+
+        if not "java" in result:
+            servers_logs[server_id].append(f"[{date.strftime('%H:%M:%S')}] [SingleCraft/WARN] Custom files are currently in experimental. Please report any issues you have!")
 
     command = result.format(max_memory=MaxMemory[0], file_name=str(jar_path))
 
@@ -129,6 +131,7 @@ def stop_all_servers():
 
 def clear_console_history(server_id):
     if not isinstance(servers_logs.get(server_id), list):
+        print(type(servers_logs.get(server_id)))
         return False
     servers_logs[server_id] = []
     return True
