@@ -47,4 +47,4 @@ app = flask.Flask(__name__)
 
 
 Blueprints.register_blueprints(app)
-app.run(host="0.0.0.0", port=5000, debug=False)
+app.run(host="0.0.0.0", port=5500, debug=False)

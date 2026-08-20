@@ -35,6 +35,7 @@
     <select id="server-jar-dropdown"></select>
     <input type="text" id="server-jar" placeholder="default.jar">
     <input type="text" id="server-port" placeholder="25565">
+    <input type="text" id="server-memory" placeholder="0">
     <button id="clear-console">Clear console history</button>
 
 <script>
@@ -86,11 +87,18 @@
         })
 
         //TODO: That's temp while server settings doesn't fully finished
-        fetch('/API/Servers/setServerPort?server_id='+getServerId())
+        fetch('/API/Servers/getServerPort?server_id='+getServerId())
             .then(res => res.json())
             .then(data => {
                 let serverPortInput = document.getElementById("server-port");
                 serverPortInput.value = data.port;
+            });
+
+        fetch('/API/Servers/getServerMemory?server_id='+getServerId())
+            .then(res => res.json())
+            .then(data => {
+                let serverMemoryInput = document.getElementById("server-memory");
+                serverMemoryInput.value = data.memory;
             });
 
         fetch('/API/Settings/GetInstalledVersion')
