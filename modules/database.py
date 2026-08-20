@@ -22,6 +22,34 @@ def get_db_connection(database: str):
             f"Unable to connect to database. \n{e}"
         )
 
+def can_access_server(server_id: int, user_id: int):
+    rank = getUserRank(user_id)
+    if rank == "ADMIN":
+        return True
+
+    for server in get_servers_list(user_id):
+        if isinstance(server, dict):
+            if server.get('id') == server_id:
+                return True
+    return False
+
+def is_connected(token):
+    if token is None:
+        return False
+
+    with get_db_connection(os.getenv("DATABASE_NAME")) as conn
+        cursor = conn.cursor()
+        cursor.execute("SELECT ID FROM Accounts WHERE Token = %s",(token,))
+        result = cursor.fetchone()
+    return True if result else False
+
+def get_servers_list(user_id):
+    with get_db_connection(os.getenv("DATABASE_NAME")) as conn:
+        cursor = conn.cursor()
+        cursor.execute('SELECT Access FROM Accounts WHERE ID = %s', (user_id,))
+        result = cursor.fetchall()
+    return result
+
 def GetUserEmailByUsername(username):
     conn = get_db_connection(os.getenv("DATABASE_NAME"))
     cursor = conn.cursor()
