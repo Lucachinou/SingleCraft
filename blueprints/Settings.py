@@ -9,7 +9,7 @@ bp = flask.Blueprint("Settings", __name__, url_prefix="/API/Settings")
 
 @bp.get('/GetCurrentVersion')
 def get_current_version():
-    if database.is_connected(token=flask.request.cookies.get('token')):
+    if not database.is_connected(token=flask.request.cookies.get('token')):
         return flask.jsonify({"success": False, "message": "UNAUTHORIZED"}), 401
 
     result = subprocess.run("git log --oneline", shell=True, text=True, capture_output=True)
@@ -18,7 +18,7 @@ def get_current_version():
 
 @bp.get('/IsUpdateAvailable')
 def IsUpdateAvailable():
-    if database.is_connected(token=flask.request.cookies.get('token')):
+    if not database.is_connected(token=flask.request.cookies.get('token')):
         return flask.jsonify({"success": False, "message": "UNAUTHORIZED"}), 401
 
     response = requests.get("https://api.github.com/repos/lucachinou/SingleCraft/commits/main")
@@ -34,7 +34,7 @@ def IsRegisterAvailable():
 
 @bp.get("/GetSettings")
 def GetSettings():
-    if database.is_connected(token=flask.request.cookies.get('token')):
+    if not database.is_connected(token=flask.request.cookies.get('token')):
         return flask.jsonify({"success": False, "message": "UNAUTHORIZED"}), 401
     return flask.jsonify({"settings": database.GetSettings()})
 

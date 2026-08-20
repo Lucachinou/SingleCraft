@@ -3,7 +3,7 @@ import os
 from pathlib import Path
 
 def register_blueprints(app):
-    for file in Path("blueprints").iterdir():
+    for file in Path(__file__).parent.iterdir():
         if file.is_file():
             if file.name != "__init__.py" and file.name != "__pycache__" and file.name != "BlueprintsManager.py" and file.name != ".DS_Store":
                 module = importlib.import_module(f"{file.parent.name}.{file.name[:-3]}")

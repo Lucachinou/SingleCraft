@@ -13,6 +13,6 @@ nbtlib==2.0.4
 numpy==2.4.6
 python-dotenv==1.2.2
 requests==2.34.2
-unicorn==2.1.4
+gunicorn
 urllib3==2.7.0
 Werkzeug==3.1.8

@@ -1,13 +1,13 @@
 import datetime
 import os
-from pathlib import Path
-
 import flask
+import gunicorn
 import logging
 import dotenv
 import sys
-
 import blueprints.BlueprintsManager as Blueprints
+
+from pathlib import Path
 from modules import database
 
 dotenv.load_dotenv()
