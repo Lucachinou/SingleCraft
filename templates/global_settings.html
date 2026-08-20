@@ -3,6 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <title>SingleCraft - Globals Settings</title>
+    <style>
+        .version-footer {
+            margin-top: 30px;
+            padding-top: 10px;
+            border-top: 1px solid #ccc;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 12px;
+            color: #666;
+        }
+        .version-footer button {
+            font-size: 11px;
+        }
+    </style>
 </head>
 <body>
     <div class="header" style="display: flex;">
@@ -22,7 +37,59 @@
         <div class="jar-list"></div>
     </div>
 
+    <div class="version-footer">
+        <span>Commit: <span id="current-commit">...</span></span>
+        <span id="update-status">Checking for updates...</span>
+        <button id="check-update">Check for updates</button>
+    </div>
+
 <script>
+    function getCurrentVersion() {
+        let commitSpan = document.getElementById("current-commit");
+
+        return fetch('/API/Settings/GetCurrentVersion')
+            .then(res => res.json())
+            .then(data => {
+                commitSpan.textContent = data.success && data.version ? data.version : "Unknown";
+            })
+            .catch(() => {
+                commitSpan.textContent = "Unknown";
+            })
+    }
+
+    function checkUpdate() {
+        let status = document.getElementById("update-status");
+        status.textContent = "Checking for updates...";
+        status.style.color = "";
+
+        return fetch('/API/Settings/IsUpdateAvailable')
+            .then(res => res.json())
+            .then(data => {
+                if (!data.success) {
+                    status.textContent = "Unable to check for updates.";
+                    status.style.color = "orange";
+                    return;
+                }
+
+                if (data.is_update_available) {
+                    status.textContent = "An update is available (latest commit: " + data.latest_commit + ")";
+                    status.style.color = "red";
+                } else {
+                    status.textContent = "SingleCraft is up to date (" + data.latest_commit + ")";
+                    status.style.color = "green";
+                }
+            })
+            .catch(() => {
+                status.textContent = "Unable to check for updates.";
+                status.style.color = "orange";
+            })
+    }
+
+    document.getElementById("check-update").addEventListener("click", () => {
+        getCurrentVersion();
+        checkUpdate();
+    })
+
     function getInstalledVersion() {
         fetch('/API/Settings/GetInstalledVersion')
         .then(res => res.json())
@@ -110,6 +177,8 @@
                 }
             })
 
+        getCurrentVersion();
+        checkUpdate();
         getInstalledVersion();
     })
 </script>

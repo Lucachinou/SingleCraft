@@ -7,17 +7,23 @@ from modules import database
 
 bp = flask.Blueprint("Settings", __name__, url_prefix="/API/Settings")
 
-@bp.get('/API/GetCurrentVersion')
+@bp.get('/GetCurrentVersion')
 def get_current_version():
+    if database.is_connected(token=flask.request.cookies.get('token')):
+        return flask.jsonify({"success": False, "message": "UNAUTHORIZED"}), 401
+
     result = subprocess.run("git log --oneline", shell=True, text=True, capture_output=True)
     current_version = result.stdout[:7]
     return flask.jsonify({"success": True, "version": current_version})
 
-@bp.get('/API/IsUpdateAvailable')
+@bp.get('/IsUpdateAvailable')
 def IsUpdateAvailable():
+    if database.is_connected(token=flask.request.cookies.get('token')):
+        return flask.jsonify({"success": False, "message": "UNAUTHORIZED"}), 401
+
     response = requests.get("https://api.github.com/repos/lucachinou/SingleCraft/commits/main")
     if response.status_code == 200:
-        latest_commit = response.json()['sha'][6]
+        latest_commit = response.json()['sha'][:7]
         return flask.jsonify({"success": True, "latest_commit": latest_commit, "is_update_available": latest_commit != subprocess.run("git log --oneline", shell=True, text=True, capture_output=True).stdout[:7]})
     else:
         return flask.jsonify({"success": False, "latest_commit": None})
@@ -28,6 +34,8 @@ def IsRegisterAvailable():
 
 @bp.get("/GetSettings")
 def GetSettings():
+    if database.is_connected(token=flask.request.cookies.get('token')):
+        return flask.jsonify({"success": False, "message": "UNAUTHORIZED"}), 401
     return flask.jsonify({"settings": database.GetSettings()})
 
 @bp.get("/GetInstalledVersion")
@@ -49,10 +57,10 @@ def AddInstalledVersion():
         return flask.jsonify({"success": False, "message": "INVALID_PARAMETERS"})
 
     if not token:
-        return flask.jsonify({"success": False, "message": "UNAUTHORIZED"})
+        return flask.jsonify({"success": False, "message": "UNAUTHORIZED"}), 401
     rank = database.getUserRank(database.GetUserIDByToken(token))
-    if rank != "ADMIN":
-        return flask.jsonify({"success": False, "message": "UNAUTHORIZED"})
+    if rank is None or rank != "ADMIN":
+        return flask.jsonify({"success": False, "message": "UNAUTHORIZED"}), 401
 
     return flask.jsonify({"success": database.addInstalledVersion(name, version, start_command)})
 
@@ -65,7 +73,7 @@ def RemoveInstalledVersion():
     if not token:
         return flask.jsonify({"success": False, "message": "UNAUTHORIZED"})
     rank = database.getUserRank(database.GetUserIDByToken(token))
-    if rank != "ADMIN":
+    if rank is None or rank != "ADMIN":
         return flask.jsonify({"success": False, "message": "UNAUTHORIZED"})
 
     return flask.jsonify({"success": database.removeInstalledVersionFromName(name)})
@@ -84,7 +92,7 @@ def UpdateSettings():
         return flask.jsonify({"success": False, "message": "UNAUTHORIZED"})
 
     rank = database.getUserRank(database.GetUserIDByToken(flask.request.cookies.get("token")))
-    if rank != "ADMIN":
+    if rank is None or rank != "ADMIN":
         return flask.jsonify({"success": False, "message": "UNAUTHORIZED"})
 
     database.UpdateSetting(setting_id, setting_value)
