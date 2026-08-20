@@ -37,7 +37,7 @@ def is_connected(token):
     if token is None:
         return False
 
-    with get_db_connection(os.getenv("DATABASE_NAME")) as conn
+    with get_db_connection(os.getenv("DATABASE_NAME")) as conn:
         cursor = conn.cursor()
         cursor.execute("SELECT ID FROM Accounts WHERE Token = %s",(token,))
         result = cursor.fetchone()
