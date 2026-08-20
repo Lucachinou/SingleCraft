@@ -25,7 +25,7 @@ def getEnabledFeatures():
 @bp.get('/getName')
 def getName():
     server_id = flask.request.args.get('server_id')
-    if database.is_connected(token=flask.request.cookies.get('token')):
+    if not database.is_connected(token=flask.request.cookies.get('token')):
         return flask.redirect(flask.url_for("BaseRoute.home"))
     if server_id is None:
         return flask.jsonify({"success": False, "message": "INVALID_PARAMETERS"})
@@ -52,7 +52,7 @@ def canAccessGlobalSettings():
 @bp.delete('/ClearConsoleHistory')
 def clearConsoleHistory():
     server_id = flask.request.args.get('server_id')
-    if database.is_connected(token=flask.request.cookies.get('token')):
+    if not database.is_connected(token=flask.request.cookies.get('token')):
         return flask.redirect(flask.url_for("BaseRoute.home"))
     if server_id is None:
         return flask.jsonify({"success": False, "message": "INVALID_PARAMETERS"})
@@ -166,7 +166,7 @@ def getServerPort():
 def getServerProperties():
     server_id = flask.request.args.get('server_id')
     token = flask.request.cookies.get('token')
-    if database.is_connected(token=flask.request.cookies.get('token')):
+    if not database.is_connected(token=flask.request.cookies.get('token')):
         return flask.redirect(flask.url_for("BaseRoute.home"))
     if server_id is None:
         return flask.jsonify({"success": False, "message": "INVALID_PARAMETERS"})
@@ -217,7 +217,7 @@ def getServerJar():
 @bp.get('/getServerMemory')
 def getServerMemory():
     server_id = flask.request.args.get('server_id')
-    if database.is_connected(token=flask.request.cookies.get('token')):
+    if not database.is_connected(token=flask.request.cookies.get('token')):
         return flask.redirect(flask.url_for("BaseRoute.home"))
     if server_id is None:
         return flask.jsonify({"success": False, "message": "INVALID_PARAMETERS"})
@@ -236,7 +236,7 @@ def getServerMemory():
 def setServerMemory():
     server_id = flask.request.args.get('server_id')
     memory = flask.request.args.get('memory')
-    if database.is_connected(token=flask.request.cookies.get('token')):
+    if not database.is_connected(token=flask.request.cookies.get('token')):
         return flask.redirect(flask.url_for("BaseRoute.home"))
     if server_id is None or server_id is None:
         return flask.jsonify({"success": False, "message": "INVALID_PARAMETERS"})
@@ -366,7 +366,7 @@ def start():
         server_id = int(server_id)
     except (ValueError, TypeError):
         return flask.jsonify({"success": False, "error": "INVALID_PARAMETERS"})
-    if database.is_connected(token=flask.request.cookies.get('token')) or server_id is None or server_path.exists() is False:
+    if not database.is_connected(token=flask.request.cookies.get('token')) or server_id is None or server_path.exists() is False:
         return flask.redirect(flask.url_for("BaseRoute.home"))
     if server_id in running_servers:
         return flask.jsonify({"success": False, "message": "ALREADY_RUNNING"})
@@ -466,7 +466,7 @@ def CreateServer():
         return flask.jsonify({"error": "MISSING_PARAMETERS"})
 
     token = flask.request.cookies.get('token')
-    if database.is_connected(token=flask.request.cookies.get('token')):
+    if not database.is_connected(token=flask.request.cookies.get('token')):
         return flask.redirect(flask.url_for("BaseRoute.home"))
 
     user_id = database.GetUserIDByToken(token)
