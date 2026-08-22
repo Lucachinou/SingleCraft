@@ -130,10 +130,11 @@ def stop_all_servers():
         stop_server(server)
 
 def clear_console_history(server_id):
+    global servers_logs
     if not isinstance(servers_logs.get(server_id), list):
         print(type(servers_logs.get(server_id)))
         return False
-    servers_logs[server_id] = []
+    servers_logs[server_id].clear()
     return True
 
 def get_console_output(server_name):

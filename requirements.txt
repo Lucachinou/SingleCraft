@@ -13,6 +13,7 @@ nbtlib==2.0.4
 numpy==2.4.6
 python-dotenv==1.2.2
 requests==2.34.2
-gunicorn
+gunicorn==23.0.0 ; sys_platform != "win32"
+waitress==3.0.2 ; sys_platform == "win32"
 urllib3==2.7.0
 Werkzeug==3.1.8

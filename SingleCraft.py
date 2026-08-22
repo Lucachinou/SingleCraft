@@ -1,5 +1,6 @@
 import datetime
 import os
+import platform
 import flask
 import gunicorn
 import logging
@@ -47,4 +48,71 @@ app = flask.Flask(__name__)
 
 
 Blueprints.register_blueprints(app)
-app.run(host="0.0.0.0", port=5500, debug=False)
+
+
+class SingleCraftServer:
+    """SingleCraft webserver (Who's decide what using between Gunicorn or Waitress)"""
+
+    OPTIONS = {
+        "bind": "0.0.0.0:5500",
+        "workers": 1,
+        "threads": 8,
+        "timeout": 120,
+        "graceful_timeout": 30,
+        "accesslog": "-",
+        "errorlog": "-",
+        "loglevel": "info",
+    }
+    using_flask_backend = True
+
+    @classmethod
+    def run(cls):
+        if cls.using_flask_backend:
+            app.run(host="0.0.0.0", port=5500, debug=False)
+        if platform.system() == "Windows":
+            cls._run_waitress()
+        else:
+            cls._run_gunicorn()
+
+    @classmethod
+    def _run_gunicorn(cls):
+        try:
+            from gunicorn.app.base import BaseApplication
+        except ImportError:
+            logger.error("[!] Gunicorn is not installed, run 'pip install gunicorn'. Falling back to Flask.")
+            app.run(host="0.0.0.0", port=5500, debug=False)
+            return
+
+        class SingleCraftApplication(BaseApplication):
+            def __init__(self, flask_app, options=None):
+                self.application = flask_app
+                self.options = options or {}
+                super().__init__()
+
+            def load_config(self):
+                for key, value in self.options.items():
+                    if key in self.cfg.settings and value is not None:
+                        self.cfg.set(key.lower(), value)
+
+            def load(self):
+                return self.application
+
+        logger.info("[*] Starting SingleCraft with Gunicorn on %s", cls.OPTIONS["bind"])
+        SingleCraftApplication(app, cls.OPTIONS).run()
+
+    @classmethod
+    def _run_waitress(cls):
+        try:
+            from waitress import serve
+        except ImportError:
+            logger.error("[!] Waitress is not installed, run 'pip install waitress'. Falling back to Flask.")
+            app.run(host="0.0.0.0", port=5500, debug=False)
+            return
+
+        host, port = cls.OPTIONS["bind"].rsplit(":", 1)
+        logger.info("[*] Gunicorn is not available on Windows, starting SingleCraft with Waitress on %s", cls.OPTIONS["bind"])
+        serve(app, host=host, port=int(port), threads=cls.OPTIONS["threads"])
+
+
+if __name__ == "__main__":
+    SingleCraftServer.run()
