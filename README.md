@@ -8,11 +8,11 @@
 ## Installation
 1. Download Python 3.11 if you don't have it already
 2. execute `pip install -r requirements.txt` in the terminal to install the required dependencies
-3. execute `flask --app SingleCraft.py run --host 0.0.0.0 --port 5000` to start the web server.
+3. execute `python SingleCraft.py` to start the web server.
 4. Open your browser and navigate to `http://localhost:5000` to access the SingleCraft dashboard.
 
 ## Known Issues
-- the clear console clear console for a brief moment
+- the clear console function does not clear console properly.
 
 ## Features
 * Create and manage multiple Minecraft servers from a single interface.
