@@ -3,12 +3,12 @@ import datetime
 import json
 import os
 import shutil
-from pathlib import Path
 import flask
 import modules.MCProperties
-from modules.management import servers_logs, running_servers, start_server, stop_server, clear_console_history
 
-from modules import database, MCProperties, management
+from pathlib import Path
+from modules.management import servers_logs, running_servers, start_server, stop_server, clear_console_history
+from modules import database, MCProperties, management, LevelHandler
 
 bp = flask.Blueprint('servers', __name__, url_prefix='/API/Servers')
 servers_path = Path(__file__).parent.parent / "servers"
@@ -19,8 +19,13 @@ jar_path.mkdir(exist_ok=True)
 @bp.get("/getEnabledFeatures")
 def getEnabledFeatures():
     server_id = flask.request.args.get('server_id')
+    if not database.is_connected(token=flask.request.cookies.get('token')):
+        return flask.redirect(flask.url_for("BaseRoute.home"))
     if server_id is None:
         return flask.jsonify({"success": False, "message": "INVALID_PARAMETERS"})
+
+    return flask.jsonify({"success": True, "enabled_features": LevelHandler.get_enabled_features(server_id)})
+
 
 @bp.get('/getName')
 def getName():

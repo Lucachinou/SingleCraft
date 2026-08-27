@@ -101,9 +101,8 @@ def getPermission(user_id: int, server_id: int):
     result = cursor.fetchall()
     cursor.close()
     conn.close()
-    if result is None:
+    if len(result) == 0:
         return None
-
     if isinstance(result[0][0], bytes):
         servers_list = ast.literal_eval(result[0][0].decode())
     else:
