@@ -192,6 +192,15 @@ def getServerNameFromID(server_id: int):
     conn.close()
     return result[0] if result else 0
 
+def getServerIDFromName(server_name: str):
+    conn = get_db_connection(os.getenv("DATABASE_NAME"))
+    cursor = conn.cursor()
+    cursor.execute('SELECT ID FROM servers WHERE Name = %s', (server_name,))
+    result = cursor.fetchone()
+    cursor.close()
+    conn.close()
+    return result[0] if result else ""
+
 def removeInstalledVersionFromName(name: str):
     conn = get_db_connection(os.getenv("DATABASE_NAME"))
     cursor = conn.cursor()

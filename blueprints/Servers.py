@@ -26,6 +26,15 @@ def getEnabledFeatures():
 
     return flask.jsonify({"success": True, "enabled_features": LevelHandler.get_enabled_features(server_id)})
 
+@bp.get("/getServerSettings")
+def getServerSettings():
+    server_id = flask.request.args.get('server_id')
+    if not database.is_connected(token=flask.request.cookies.get('token')):
+        return flask.jsonify({"success": False, "message": "INVALID_PARAMETERS"})
+    if server_id is None:
+        return flask.jsonify({"success": False, "message": "INVALID_PARAMETERS"})
+
+    return flask.jsonify({"success": True, "settings": []})
 
 @bp.get('/getName')
 def getName():
@@ -41,6 +50,21 @@ def getName():
         return flask.jsonify({"success": False, "error": "INVALID_PARAMETERS"})
 
     return flask.jsonify({"success": True, "name": database.getServerNameFromID(server_id)})
+
+@bp.get('/getID')
+def getName():
+    server_name = flask.request.args.get('server_name')
+    if not database.is_connected(token=flask.request.cookies.get('token')):
+        return flask.redirect(flask.url_for("BaseRoute.home"))
+    if server_name is None:
+        return flask.jsonify({"success": False, "message": "INVALID_PARAMETERS"})
+
+    try:
+        server_id = int(server_name)
+    except (ValueError, TypeError):
+        return flask.jsonify({"success": False, "error": "INVALID_PARAMETERS"})
+
+    return flask.jsonify({"success": True, "ID": server_name})
 
 @bp.get('CanAccessGlobalSettings')
 def canAccessGlobalSettings():

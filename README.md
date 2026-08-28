@@ -5,6 +5,8 @@
 **SingleCraft is a powerful and lightweight Minecraft servers managements**
 *Note: SingleCraft are still in beta and doesn't have all the planned features!*
 
+*Currently not secure as it can be (Because of missing robust permissions system)*
+
 ## Installation
 1. Download Python 3.11 if you don't have it already
 2. execute `pip install -r requirements.txt` in the terminal to install the required dependencies

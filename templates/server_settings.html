@@ -13,8 +13,25 @@
     <div class="settings"></div>
 
 <script>
+    function getServerId() {
+        return window.location.href.split("/")[4];
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
-        fetch('/API/Settings/GetSettings')
+        fetch('/API/Servers/getName?server_id=' + getServerId())
+        .then(res => res.json())
+        .then(data => {
+            if (data.name !== undefined) {
+                document.title = "SingleCraft - Settings - "+data.name;
+                document.getElementById("ServerName").textContent = data.name;
+            } else {
+                console.error("Cannot find server name, try to refresh the page.");
+                document.title = "SingleCraft - Settings - Unknown Server";
+                document.getElementById("ServerName").textContent = "Unknown Server";
+            }
+        })
+
+        fetch('/API/Server/getServerSettings')
             .then(res => res.json())
             .then(data => {
                 let settingsDiv = document.getElementsByClassName("settings")[0];

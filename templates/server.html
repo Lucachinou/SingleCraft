@@ -20,7 +20,7 @@
     </div>
 
     <div class="sidebar">
-        <button id="server-settings" disabled>Settings</button>
+        <button id="server-settings">Settings</button>
     </div>
 
     <div>
@@ -147,6 +147,21 @@
                 console.log(data);
             })
     })
+
+    document.getElementById("server-jar").addEventListener("keydown", function(e) {
+        if (e.key === "Enter") {
+            fetch("/API/Servers/ChangeJar?server_id="+getServerId()+"&server_jar="+e.target.value)
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById("server-jar-dropdown").value = "Unknown";
+            })
+        }
+    });
+
+    document.getElementById("server-settings").addEventListener("click", function(e) {
+        window.location.href = "/server/"+getServerId()+"/settings";
+    });
+
 
     document.getElementById("server-jar").addEventListener("keydown", function(e) {
         if (e.key === "Enter") {

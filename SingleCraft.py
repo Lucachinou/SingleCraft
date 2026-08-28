@@ -68,7 +68,9 @@ class SingleCraftServer:
     @classmethod
     def run(cls):
         if cls.using_flask_backend:
-            app.run(host="0.0.0.0", port=5500, debug=False)
+            logger.warning("[!] Currently running using Flask which is not recommended on a production server. Please install Gunicorn or Waitress (for Windows).")
+            app.run(host="0.0.0.0", port=5500, debug=True)
+            return
         if platform.system() == "Windows":
             cls._run_waitress()
         else:
@@ -79,8 +81,7 @@ class SingleCraftServer:
         try:
             from gunicorn.app.base import BaseApplication
         except ImportError:
-            logger.error("[!] Gunicorn is not installed, run 'pip install gunicorn'. Falling back to Flask.")
-            app.run(host="0.0.0.0", port=5500, debug=False)
+            logger.error("[!] Gunicorn is not installed, run 'pip install gunicorn'.")
             return
 
         class SingleCraftApplication(BaseApplication):
