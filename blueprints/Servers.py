@@ -52,7 +52,7 @@ def getName():
     return flask.jsonify({"success": True, "name": database.getServerNameFromID(server_id)})
 
 @bp.get('/getID')
-def getName():
+def getID():
     server_name = flask.request.args.get('server_name')
     if not database.is_connected(token=flask.request.cookies.get('token')):
         return flask.redirect(flask.url_for("BaseRoute.home"))
